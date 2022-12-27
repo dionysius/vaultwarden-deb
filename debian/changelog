@@ -1,5 +1,6 @@
 vaultwarden (1.27.0-0alpha1) unstable; urgency=medium
 
+  [ dionysius ]
   * Init
 
- -- dionysius <dragon.dionysius@gmail.com>  Tue, 27 Dec 2022 07:47:11 +0100
+ -- Denis Manente <denis.manente@automatic-server.com>  Tue, 27 Dec 2022 22:27:46 +0100
