@@ -1,3 +1,13 @@
+vaultwarden (1.27.0-0alpha2) unstable; urgency=medium
+
+  [ dionysius ]
+  * correct errors in readme
+  * I think multiarch same is not needed here
+  * default installation with sqlite wants data dir
+  * vaultwarden logs to stdout, so using systemd not needed to define additional log file
+
+ -- Denis Manente <denis.manente@automatic-server.com>  Tue, 27 Dec 2022 23:31:11 +0100
+
 vaultwarden (1.27.0-0alpha1) unstable; urgency=medium
 
   [ dionysius ]
