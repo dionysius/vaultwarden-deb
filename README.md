@@ -17,7 +17,7 @@ This debian source package builds [vaultwarden](https://github.com/dani-garcia/v
 - Switch to the folder: `cd vaultwarden-deb`
 - Build with help of git-buildpacke: `gbp buildpackage`
   - There are many arguments to fine tune how it is built (see `gbp buildpackage --help` and `dpkg-buildpackage --help`)
-  - Mine are usually: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there) and `--git-ignore-branch` or `--git-debian-branch=...` (if your debian branch is not in `main`)
+  - Mine are usually: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there)
 
 ## Flaws
 
