@@ -18,9 +18,6 @@ override_dh_auto_install:
 
 # use source env template and prepare maintainer defaults
 	cp .env.template debian/vaultwarden.default
-	sed -i 's|^# DATA_FOLDER=.*|DATA_FOLDER=/var/lib/vaultwarden/data|g' debian/vaultwarden.default
-	sed -i 's|^# EXTENDED_LOGGING=true|EXTENDED_LOGGING=true|g' debian/vaultwarden.default
-	sed -i 's|^# LOG_FILE=.*|LOG_FILE=/var/log/vaultwarden/vaultwarden.log|g' debian/vaultwarden.default
 
 	dh_auto_install -- --no-source
 
