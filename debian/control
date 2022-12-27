@@ -18,7 +18,6 @@ Rules-Requires-Root: no
 
 Package: vaultwarden
 Architecture: any
-Multi-Arch: same
 Depends: adduser, ${misc:Depends}, ${shlibs:Depends}
 Recommends: vaultwarden-web-vault
 Suggests: sqlite3 | postgresql | default-mysql-server | virtual-mysql-server
