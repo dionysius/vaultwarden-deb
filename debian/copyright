@@ -4,17 +4,25 @@ Source: https://github.com/dani-garcia/vaultwarden
 
 Files: *
 Copyright: 2018-2022, vaultwarden contributors
-License: GPL-v3
+License: GPL-3+
 Comment:
  Please refer to the contributors page of the upstream git for a complete list
 
 Files: debian/*
-Copyright: 2022, dionysius <dragon.dionysius@gmail.com>
+Copyright: 2022 dionysius <dragon.dionysius@gmail.com>
 License: Expat
+
+Files: debian/vaultwarden.logrotate debian/vaultwarden.service
+Copyright: 2022 Gijs van Tulder <gvtulder@gmail.com>
+License: GPL-2+
 
 License: GPL-3+
  On Debian systems, the complete text of the GNU General Public License version 3
  can be found in "/usr/share/common-licenses/GPL-3".
+
+License: GPL-2+
+ On Debian systems, the complete text of the GNU General Public License version 2
+ can be found in "/usr/share/common-licenses/GPL-2".
 
 License: Expat
  Permission is hereby granted, free of charge, to any person obtaining a copy of

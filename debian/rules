@@ -2,16 +2,31 @@
 
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
+include /usr/share/dpkg/default.mk
 
 # use cargo provided by rustup if available
 export PATH := $(HOME)/.cargo/bin:$(PATH)
-# use local fork of dh-cargo
-export PERL5LIB = $(CURDIR)/debian/dh-cargo/lib
 
 %:
-	dh $@ --buildsystem=cargo
+	dh $@
 
-# unsure why the default building process happens in dh_auto_test, but we
-# anyway miss a way to add those features argument
-override_dh_auto_test:
-	cargo build --features sqlite,mysql,postgresql
+override_dh_auto_install:
+# build and install in one go
+	mkdir -p debian/tmp/usr
+	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp
+	mv debian/tmp/bin debian/tmp/usr
+
+# use source env template and prepare maintainer defaults
+	cp .env.template debian/vaultwarden.default
+	sed -i 's|^# DATA_FOLDER=.*|DATA_FOLDER=/var/lib/vaultwarden/data|g' debian/vaultwarden.default
+	sed -i 's|^# EXTENDED_LOGGING=true|EXTENDED_LOGGING=true|g' debian/vaultwarden.default
+	sed -i 's|^# LOG_FILE=.*|LOG_FILE=/var/log/vaultwarden/vaultwarden.log|g' debian/vaultwarden.default
+
+	dh_auto_install -- --no-source
+
+override_dh_installman:
+	mkdir -p debian/tmp/man
+	help2man debian/tmp/usr/bin/vaultwarden -n "Alternative implementation of the Bitwarden server API" --no-info > debian/tmp/man/vaultwarden.1
+	ls -1 -d debian/tmp/man/* > "debian/$(DEB_SOURCE).manpages"
+
+	dh_installman

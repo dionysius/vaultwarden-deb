@@ -1,0 +1,8 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "configure" ]; then
+  sudo adduser --system --group --quiet --no-create-home --home /var/lib/vaultwarden vaultwarden >/dev/null || true
+fi
+
+#DEBHELPER#
