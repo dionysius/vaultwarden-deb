@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+MAKEFLAGS += --no-print-directory
+
+# use cargo provided by rustup if available
+export PATH := $(HOME)/.cargo/bin:$(PATH)
+# use local fork of dh-cargo
+export PERL5LIB = $(CURDIR)/debian/dh-cargo/lib
+
+%:
+	dh $@ --buildsystem=cargo
+
+# unsure why the default building process happens in dh_auto_test, but we
+# anyway miss a way to add those features argument
+override_dh_auto_test:
+	cargo build --features sqlite,mysql,postgresql

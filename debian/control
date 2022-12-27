@@ -1,0 +1,26 @@
+Source: vaultwarden
+Section: misc
+Priority: optional
+Build-Depends: debhelper-compat (= 13),
+               dh-cargo,
+               libmariadb-dev,
+               libmariadb-dev-compat,
+               libpq-dev,
+               libsqlite3-dev,
+               libssl-dev,
+               pkg-config
+Maintainer: dionysius <dragon.dionysius@gmail.com>
+Standards-Version: 4.6.1
+Vcs-Git: https://github.com/dionysius/vaultwarden-deb.git
+Vcs-Browser: https://github.com/dionysius/vaultwarden-deb
+Homepage: https://github.com/dani-garcia/vaultwarden
+Rules-Requires-Root: no
+
+Package: vaultwarden
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends}
+Description: Alternative implementation of the Bitwarden server API written in
+ Rust and compatible with upstream Bitwarden clients.
+ .
+ This package contains ...
