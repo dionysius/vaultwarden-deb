@@ -1,5 +1,5 @@
 [Unit]
-Description=Bitwarden Server (Rust Edition)
+Description=Vaultwarden API server
 Documentation=https://github.com/dani-garcia/vaultwarden
 # If you use a database like mariadb,mysql or postgresql, 
 # you have to add them like the following and uncomment them 

@@ -2,7 +2,6 @@ Source: vaultwarden
 Section: misc
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
-               help2man,
                libmariadb-dev,
                libmariadb-dev-compat,
                libpq-dev,
@@ -21,10 +20,10 @@ Architecture: any
 Depends: adduser, vaultwarden-web-vault, ${misc:Depends}, ${shlibs:Depends}
 Suggests: sqlite3 | postgresql | default-mysql-server | virtual-mysql-server
 Built-Using: ${misc:Built-Using}
-Description: Unofficial Bitwarden compatible server written in Rust
+Description: Vaultwarden API server
  Alternative implementation of the Bitwarden server API written in Rust and
  compatible with upstream Bitwarden clients*, perfect for self-hosted
  deployment where running the official resource-heavy service might not be
  ideal.
  .
- This package contains the vaultwarden api backend binary
+ This package contains the vaultwarden api server binary

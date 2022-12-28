@@ -20,10 +20,3 @@ override_dh_auto_install:
 	cp .env.template debian/vaultwarden.default
 
 	dh_auto_install -- --no-source
-
-override_dh_installman:
-	mkdir -p debian/tmp/man
-	help2man debian/tmp/usr/bin/vaultwarden -n "Alternative implementation of the Bitwarden server API" --no-info > debian/tmp/man/vaultwarden.1
-	ls -1 -d debian/tmp/man/* > "debian/$(DEB_SOURCE).manpages"
-
-	dh_installman
