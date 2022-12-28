@@ -2,7 +2,6 @@
 
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
-include /usr/share/dpkg/default.mk
 
 # use cargo provided by rustup if available
 export PATH := $(HOME)/.cargo/bin:$(PATH)

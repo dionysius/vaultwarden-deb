@@ -10,6 +10,7 @@ This debian source package builds [vaultwarden](https://github.com/dani-garcia/v
 - Installed `cargo` and its dependencies from your apt sources
   - Don't forget to look into your `*-updates` apt sources for newer versions
   - If your rust/cargo version is not recent enough, this debian source also supports those installed with help of [`rustup`](https://rustup.rs)
+    - Requires preloaded `rustup toolchain install <version>` before invoking packaging
 
 ## Packaging
 
