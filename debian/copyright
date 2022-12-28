@@ -3,7 +3,7 @@ Upstream-Name: vaultwarden
 Source: https://github.com/dani-garcia/vaultwarden
 
 Files: *
-Copyright: 2018-2022, vaultwarden contributors
+Copyright: 2018-2022 vaultwarden contributors
 License: GPL-3+
 Comment:
  Please refer to the contributors page of the upstream git for a complete list
