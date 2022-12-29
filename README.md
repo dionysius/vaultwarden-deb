@@ -9,9 +9,9 @@ Prebuild deb packages are available in the [releases section](releases) for late
 - Installed `git-buildpackage` `debhelper-compat`
 - All build dependencies as defined in [debian/control](debian/control) are installed (it will notify you in the build process as well)
   - [`mk-build-deps`](https://manpages.debian.org/testing/devscripts/mk-build-deps.1.en.html) can help you automate the installation
-- Installed `cargo` and its dependencies from your apt sources
+- If `cargo` is not recent enough:
   - Don't forget to look into your `*-updates` apt sources for newer versions
-  - If your rust/cargo version is not recent enough, this debian source also supports those installed with help of [`rustup`](https://rustup.rs)
+  - This debian source also supports those installed with help of [`rustup`](https://rustup.rs)
     - Requires preloaded `rustup toolchain install <version>` before invoking packaging
 
 ## Packaging

@@ -12,7 +12,7 @@ export PATH := $(HOME)/.cargo/bin:$(PATH)
 override_dh_auto_install:
 # build and install in one go
 	mkdir -p debian/tmp/usr
-	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp
+	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp --debug
 	mv debian/tmp/bin debian/tmp/usr
 
 # use source env template and prepare maintainer defaults

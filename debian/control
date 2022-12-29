@@ -1,7 +1,8 @@
 Source: vaultwarden
 Section: misc
 Priority: optional
-Build-Depends: debhelper-compat (= 13),
+Build-Depends: cargo,
+               debhelper-compat (= 13),
                libmariadb-dev,
                libmariadb-dev-compat,
                libpq-dev,

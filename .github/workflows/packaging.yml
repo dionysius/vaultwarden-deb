@@ -4,18 +4,16 @@ on:
   push:
     tags:
       - 'debian/*'
+      # - 'debian/*.*.*-*'
 
 env:
-  DEBFULLNAME="Github Actions"
-  DEBEMAIL="github-actions@example.com"
+  DEBFULLNAME: Github Actions
+  DEBEMAIL: "github-actions@example.com"
 
 jobs:
-  packaging:
 
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04]
+  packaging:
+    runs-on: [ubuntu-22.04]
 
     steps:
       - name: check out
@@ -26,15 +24,17 @@ jobs:
       - name: install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y debhelper-compat git-buildpackage equivs cargo
+          sudo apt-get install -y debhelper-compat git-buildpackage equivs
           sudo mk-build-deps -i -r source/debian/control -t "apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends --yes"
           rm -f *.deb *.buildinfo *.changes
       - name: dist specific version
         run: |
           pushd source
+          git config user.name "${DEBFULLNAME}"
+          git config user.email "${DEBEMAIL}"
           DISTCODENAME=$(lsb_release -c -s)
           PARENTVERSION=$(dpkg-parsechangelog --show-field Version)
-          dch -D "${DISTCODENAME}" -v "${PARENTVERSION}~${DISTCODENAME}" "Release for ${DISTCODENAME}"
+          dch -b -D "${DISTCODENAME}" -v "${PARENTVERSION}~${DISTCODENAME}" "Release for ${DISTCODENAME}"
           git add .
           git commit -m "Update changelog for $(dpkg-parsechangelog --show-field Version) release"
           popd
@@ -47,6 +47,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: results
+          retention-days: 1
           path: |
             *.buildinfo
             *.changes
@@ -54,3 +55,19 @@ jobs:
             *.deb
             *.dsc
             *.tar*
+
+  release:
+    needs: packaging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifact@v3
+      - name: release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          automatic_release_tag: "${{ github.ref_name }}"
+          files: |
+            **/*
