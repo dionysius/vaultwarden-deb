@@ -5,6 +5,10 @@ on:
     tags:
       - 'debian/*'
 
+env:
+  DEBFULLNAME="Github Actions"
+  DEBEMAIL="github-actions@example.com"
+
 jobs:
   packaging:
 
@@ -25,13 +29,28 @@ jobs:
           sudo apt-get install -y debhelper-compat git-buildpackage equivs cargo
           sudo mk-build-deps -i -r source/debian/control -t "apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends --yes"
           rm -f *.deb *.buildinfo *.changes
+      - name: dist specific version
+        run: |
+          pushd source
+          DISTCODENAME=$(lsb_release -c -s)
+          PARENTVERSION=$(dpkg-parsechangelog --show-field Version)
+          dch -D "${DISTCODENAME}" -v "${PARENTVERSION}~${DISTCODENAME}" "Release for ${DISTCODENAME}"
+          git add .
+          git commit -m "Update changelog for $(dpkg-parsechangelog --show-field Version) release"
+          popd
       - name: build deb
         run: |
-          cd source
-          gbp buildpackage -F -us -uc --git-export-dir=../build --git-ignore-branch
+          pushd source
+          gbp buildpackage -F -us -uc --git-export-dir=.. --git-ignore-branch
+          popd
       - name: upload artifacts
         uses: actions/upload-artifact@v3
         with:
           name: results
           path: |
-          
+            *.buildinfo
+            *.changes
+            *.ddeb
+            *.deb
+            *.dsc
+            *.tar*
