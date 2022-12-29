@@ -1,3 +1,17 @@
+vaultwarden (1.27.0-0alpha4) unstable; urgency=medium
+
+  [ dionysius ]
+  * no normal switch to other branch so we can remove argument in readme
+  * fix username in changelog
+  * small fix in copyright
+  * use bitwarden as few as possible
+  * add hint for required preloaded cargo before packaging
+  * add github actions workflow
+  * ignore checkout LICENSE and README during build
+  * attempt for github actions
+
+ -- Denis Manente <denis.manente@automatic-server.com>  Thu, 29 Dec 2022 02:38:00 +0100
+
 vaultwarden (1.27.0-0alpha3) unstable; urgency=medium
 
   [ dionysius ]
