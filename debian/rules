@@ -7,7 +7,7 @@ MAKEFLAGS += --no-print-directory
 export PATH := $(HOME)/.cargo/bin:$(PATH)
 
 # override release profile with optimizations, debug and lto
-rustinstallargs = --config profile.release.opt-level=3 \
+cargoinstallargs = --config profile.release.opt-level=3 \
 									--config profile.release.debug=true \
 									--config profile.release.split-debuginfo=\"off\" \
 									--config profile.release.strip=\"none\" \
@@ -19,7 +19,7 @@ rustinstallargs = --config profile.release.opt-level=3 \
 # for now we build and install in one go
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr
-	cargo install $(rustinstallargs) --path . --features sqlite,mysql,postgresql --root debian/tmp
+	cargo install $(cargoinstallargs) --path . --features sqlite,mysql,postgresql --root debian/tmp
 	mv debian/tmp/bin debian/tmp/usr
 
 # use upstream env template as defaults
