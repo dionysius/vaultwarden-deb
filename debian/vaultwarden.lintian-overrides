@@ -1,0 +1,4 @@
+# binary has no command line
+vaultwarden: no-manual-page usr/bin/vaultwarden
+# for older openssl builds
+vaultwarden: possible-gpl-code-linked-with-openssl

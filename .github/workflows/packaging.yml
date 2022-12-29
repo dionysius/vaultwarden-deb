@@ -3,8 +3,7 @@ name: deb packaging
 on:
   push:
     tags:
-      - 'debian/*'
-      # - 'debian/*.*.*-*'
+      - 'debian/*.*.*-*'
 
 env:
   DEBFULLNAME: Github Actions
