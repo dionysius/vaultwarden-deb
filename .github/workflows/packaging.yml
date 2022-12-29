@@ -1,0 +1,37 @@
+name: deb packaging
+
+on:
+  push:
+    tags:
+      - 'debian/*'
+
+jobs:
+  packaging:
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04]
+
+    steps:
+      - name: check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          path: source
+      - name: install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debhelper-compat git-buildpackage equivs cargo
+          sudo mk-build-deps -i -r source/debian/control -t "apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends --yes"
+          rm -f *.deb *.buildinfo *.changes
+      - name: build deb
+        run: |
+          cd source
+          gbp buildpackage -F -us -uc --git-export-dir=../build --git-ignore-branch
+      - name: upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: results
+          path: |
+          

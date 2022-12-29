@@ -1,0 +1,2 @@
+# Don't store .github
+extend-diff-ignore = "(^|/)(.github)"
