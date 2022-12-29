@@ -1,2 +1,2 @@
 # Don't store .github
-extend-diff-ignore = "(^|/)(.github)"
+extend-diff-ignore = "(^|/)(.github|LICENSE|README)"
