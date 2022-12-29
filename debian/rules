@@ -6,15 +6,20 @@ MAKEFLAGS += --no-print-directory
 # use cargo provided by rustup if available
 export PATH := $(HOME)/.cargo/bin:$(PATH)
 
+# override release profile with optimizations, debug and lto
+rustinstallargs = --config profile.release.opt-level=3 \
+									--config profile.release.debug=true \
+									--config profile.release.split-debuginfo=\"off\" \
+									--config profile.release.strip=\"none\" \
+									--config profile.release.lto=true
+
 %:
 	dh $@
 
 # for now we build and install in one go
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr
-# Theres no default cargo profile providing optimizations and debug info, otherwise I'd add --debug
-# see: https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles
-	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp
+	cargo install $(rustinstallargs) --path . --features sqlite,mysql,postgresql --root debian/tmp
 	mv debian/tmp/bin debian/tmp/usr
 
 # use upstream env template as defaults
