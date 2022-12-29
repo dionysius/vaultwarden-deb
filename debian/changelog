@@ -1,3 +1,12 @@
+vaultwarden (1.27.0-0alpha6) unstable; urgency=medium
+
+  [ dionysius ]
+  * add issue url to lintian override of openssl linking license conflict
+  * add doc url to cargo profiles
+  * add optimization with debug flags
+
+ -- Denis Manente <denis.manente@automatic-server.com>  Thu, 29 Dec 2022 07:28:29 +0100
+
 vaultwarden (1.27.0-0alpha5) unstable; urgency=medium
 
   [ dionysius ]
