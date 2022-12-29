@@ -12,7 +12,8 @@ export PATH := $(HOME)/.cargo/bin:$(PATH)
 # for now we build and install in one go
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr
-# Theres no cargo profile providing optimizations and debug info, otherwise I'd add --debug
+# Theres no default cargo profile providing optimizations and debug info, otherwise I'd add --debug
+# see: https://doc.rust-lang.org/cargo/reference/profiles.html#default-profiles
 	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp
 	mv debian/tmp/bin debian/tmp/usr
 
