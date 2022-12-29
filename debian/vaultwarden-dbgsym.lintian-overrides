@@ -1,0 +1,2 @@
+# probably https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1000977
+vaultwarden-dbgsym: elf-error In program headers: Unable to find program interpreter name

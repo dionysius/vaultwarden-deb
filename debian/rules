@@ -9,13 +9,14 @@ export PATH := $(HOME)/.cargo/bin:$(PATH)
 %:
 	dh $@
 
+# for now we build and install in one go
 override_dh_auto_install:
-# build and install in one go
 	mkdir -p debian/tmp/usr
-	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp --debug
+# Theres no cargo profile providing optimizations and debug info, otherwise I'd add --debug
+	cargo install --path . --features sqlite,mysql,postgresql --root debian/tmp
 	mv debian/tmp/bin debian/tmp/usr
 
-# use source env template and prepare maintainer defaults
+# use upstream env template as defaults
 	cp .env.template debian/vaultwarden.default
 
 	dh_auto_install -- --no-source
