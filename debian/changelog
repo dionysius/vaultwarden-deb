@@ -1,3 +1,12 @@
+vaultwarden (1.27.0-0alpha5) unstable; urgency=medium
+
+  [ dionysius ]
+  * add github actions to package on debian tags and release them
+  * define lintian overrides
+  * prefer optimizations over debug symbols for now
+
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 29 Dec 2022 06:41:29 +0100
+
 vaultwarden (1.27.0-0alpha4) unstable; urgency=medium
 
   [ dionysius ]
@@ -10,7 +19,7 @@ vaultwarden (1.27.0-0alpha4) unstable; urgency=medium
   * ignore checkout LICENSE and README during build
   * attempt for github actions
 
- -- Denis Manente <denis.manente@automatic-server.com>  Thu, 29 Dec 2022 02:38:00 +0100
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 29 Dec 2022 02:38:00 +0100
 
 vaultwarden (1.27.0-0alpha3) unstable; urgency=medium
 
