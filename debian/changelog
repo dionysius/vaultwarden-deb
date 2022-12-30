@@ -1,3 +1,12 @@
+vaultwarden (1.27.0-0alpha7) unstable; urgency=medium
+
+  [ dionysius ]
+  * tiny rename of a make variable
+  * include rust also as candidate
+  * compile fails, disable lto
+
+ -- Denis Manente <denis.manente@automatic-server.com>  Fri, 30 Dec 2022 07:36:35 +0100
+
 vaultwarden (1.27.0-0alpha6) unstable; urgency=medium
 
   [ dionysius ]
