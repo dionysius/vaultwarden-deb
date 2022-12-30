@@ -6,12 +6,11 @@ MAKEFLAGS += --no-print-directory
 # use cargo provided by rustup if available
 export PATH := $(HOME)/.cargo/bin:$(PATH)
 
-# override release profile with optimizations, debug and lto
+# override release profile with optimizations, debug
 cargoinstallargs = --config profile.release.opt-level=3 \
 									--config profile.release.debug=true \
 									--config profile.release.split-debuginfo=\"off\" \
-									--config profile.release.strip=\"none\" \
-									--config profile.release.lto=true
+									--config profile.release.strip=\"none\"
 
 %:
 	dh $@
