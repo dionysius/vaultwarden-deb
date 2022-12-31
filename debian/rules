@@ -21,7 +21,9 @@ override_dh_auto_install:
 	cargo install $(cargoinstallargs) --path . --features sqlite,mysql,postgresql --root debian/tmp
 	mv debian/tmp/bin debian/tmp/usr
 
-# use upstream env template as defaults
+# use upstream env template as defaults with some maintainer defaults
 	cp .env.template debian/vaultwarden.default
+	sed -i '/^# ADMIN_TOKEN=.*/a ADMIN_TOKEN_FILE=\/etc\/vaultwarden\/admin_token' debian/vaultwarden.default
+	sed -i 's|^# WEB_VAULT_FOLDER=.*|WEB_VAULT_FOLDER=/usr/share/vaultwarden-web-vault/|g' debian/vaultwarden.default
 
 	dh_auto_install -- --no-source

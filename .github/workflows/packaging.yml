@@ -60,13 +60,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: check out
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          path: source
       - name: download artifacts
         uses: actions/download-artifact@v3
+      - name: prepare changelog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg-dev
+          pushd source
+          dpkg-parsechangelog -S Changes | tail -n+4 > ../changelog
+          popd
       - name: release
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          automatic_release_tag: "${{ github.ref_name }}"
+          draft: false
+          fail_on_unmatched_files: true
+          body_path: changelog
           files: |
-            **/*
+            results/*

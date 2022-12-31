@@ -18,7 +18,11 @@ Rules-Requires-Root: no
 
 Package: vaultwarden
 Architecture: any
-Depends: adduser, vaultwarden-web-vault, ${misc:Depends}, ${shlibs:Depends}
+Depends: adduser,
+         openssl,
+         vaultwarden-web-vault,
+         ${misc:Depends},
+         ${shlibs:Depends}
 Suggests: sqlite3 | postgresql | default-mysql-server | virtual-mysql-server
 Built-Using: ${misc:Built-Using}
 Description: Unofficial Bitwarden compatible server written in Rust

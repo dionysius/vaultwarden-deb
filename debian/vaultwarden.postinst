@@ -3,6 +3,7 @@ set -e
 
 if [ "$1" = "configure" ]; then
   sudo adduser --system --group --quiet --no-create-home --home /var/lib/vaultwarden vaultwarden >/dev/null || true
+  [ ! -f /etc/vaultwarden/admin_token ] && openssl rand -base64 48 > /etc/vaultwarden/admin_token
 fi
 
 #DEBHELPER#
