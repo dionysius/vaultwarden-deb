@@ -2,29 +2,26 @@ vaultwarden (1.27.0-0alpha8) unstable; urgency=medium
 
   * set vaultwarden maintainer defaults
 
- -- dionysius <dragon.dionysius@gmail.com>  Sat, 31 Dec 2022 05:24:45 +0100
+ -- dionysius <dragon.dionysius@gmail.com>  Sat, 31 Dec 2022 06:01:33 +0100
 
 vaultwarden (1.27.0-0alpha7) unstable; urgency=medium
 
-  [ dionysius ]
   * tiny rename of a make variable
   * include rust also as candidate
   * compile fails, disable lto
 
- -- Denis Manente <denis.manente@automatic-server.com>  Fri, 30 Dec 2022 07:36:35 +0100
+ -- dionysius <dragon.dionysius@gmail.com>  Fri, 30 Dec 2022 07:36:35 +0100
 
 vaultwarden (1.27.0-0alpha6) unstable; urgency=medium
 
-  [ dionysius ]
   * add issue url to lintian override of openssl linking license conflict
   * add doc url to cargo profiles
   * add optimization with debug flags
 
- -- Denis Manente <denis.manente@automatic-server.com>  Thu, 29 Dec 2022 07:28:29 +0100
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 29 Dec 2022 07:28:29 +0100
 
 vaultwarden (1.27.0-0alpha5) unstable; urgency=medium
 
-  [ dionysius ]
   * add github actions to package on debian tags and release them
   * define lintian overrides
   * prefer optimizations over debug symbols for now
@@ -33,7 +30,6 @@ vaultwarden (1.27.0-0alpha5) unstable; urgency=medium
 
 vaultwarden (1.27.0-0alpha4) unstable; urgency=medium
 
-  [ dionysius ]
   * no normal switch to other branch so we can remove argument in readme
   * fix username in changelog
   * small fix in copyright
@@ -47,7 +43,6 @@ vaultwarden (1.27.0-0alpha4) unstable; urgency=medium
 
 vaultwarden (1.27.0-0alpha3) unstable; urgency=medium
 
-  [ dionysius ]
   * logrotate not needed anymore
   * web-vault is required, so set as dependency
 
@@ -55,7 +50,6 @@ vaultwarden (1.27.0-0alpha3) unstable; urgency=medium
 
 vaultwarden (1.27.0-0alpha2) unstable; urgency=medium
 
-  [ dionysius ]
   * correct errors in readme
   * I think multiarch same is not needed here
   * default installation with sqlite wants data dir
@@ -65,7 +59,6 @@ vaultwarden (1.27.0-0alpha2) unstable; urgency=medium
 
 vaultwarden (1.27.0-0alpha1) unstable; urgency=medium
 
-  [ dionysius ]
   * Init
 
  -- dionysius <dragon.dionysius@gmail.com>  Tue, 27 Dec 2022 22:27:46 +0100
