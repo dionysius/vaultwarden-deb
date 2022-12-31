@@ -3,7 +3,6 @@ Section: misc
 Priority: optional
 Build-Depends: cargo,
                debhelper-compat (= 13),
-               libmariadb-dev,
                libmariadb-dev-compat,
                libpq-dev,
                libsqlite3-dev,
