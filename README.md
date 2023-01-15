@@ -2,7 +2,7 @@
 
 This debian source package builds [vaultwarden](https://github.com/dani-garcia/vaultwarden/) natively on your build environment. No annoying docker! It is managed with [git-buildpackage](https://wiki.debian.org/PackagingWithGit) and aims to be a pretty good quality debian source package. You can find the maintaining command summary in [debian/gbp.conf](debian/gbp.conf).
 
-You will also need to build/install [vaultwarden web vault](https://github.com/dionysius/vaultwarden-web-vault-deb).
+You will also need [vaultwarden web vault](https://github.com/dionysius/vaultwarden-web-vault-deb).
 
 ## Download prebuilt packages
 
