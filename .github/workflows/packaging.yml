@@ -4,82 +4,44 @@ on:
   push:
     tags:
       - 'debian/*.*.*-*'
+      - 'test/*'
 
-env:
-  DEBFULLNAME: Github Actions
-  DEBEMAIL: "github-actions@example.com"
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
-  packaging:
-    runs-on: [ubuntu-22.04]
-
-    steps:
-      - name: check out
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          path: source
-      - name: install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y debhelper-compat git-buildpackage equivs
-          sudo mk-build-deps -i -r source/debian/control -t "apt-get -y -o Debug::pkgProblemResolver=yes --no-install-recommends --yes"
-          rm -f *.deb *.buildinfo *.changes
-      - name: dist specific version
-        run: |
-          pushd source
-          git config user.name "${DEBFULLNAME}"
-          git config user.email "${DEBEMAIL}"
-          DISTCODENAME=$(lsb_release -c -s)
-          PARENTVERSION=$(dpkg-parsechangelog --show-field Version)
-          dch -b -D "${DISTCODENAME}" -v "${PARENTVERSION}~${DISTCODENAME}" "Release for ${DISTCODENAME}"
-          git add .
-          git commit -m "Update changelog for $(dpkg-parsechangelog --show-field Version) release"
-          popd
-      - name: build deb
-        run: |
-          pushd source
-          gbp buildpackage -F -us -uc --git-export-dir=.. --git-ignore-branch
-          popd
-      - name: upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: results
-          retention-days: 1
-          path: |
-            *.buildinfo
-            *.changes
-            *.ddeb
-            *.deb
-            *.dsc
-            *.tar*
-
+  build-native:
+    uses: dionysius/gbp-gha/.github/workflows/gbp-native.yml@main
+    with:
+      # https://github.com/orgs/community/discussions/26671
+      DEBFULLNAME: dionysius (github-actions)
+      DEBEMAIL: dragon.dionysius+gha@gmail.com
+      before_build_deps_install: |
+        if ! command -v rustup > /dev/null; then
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source "$HOME/.cargo/env"
+        fi
+        rustup toolchain install stable
+    secrets:
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+  build-qemu:
+    uses: dionysius/gbp-gha/.github/workflows/gbp-qemu.yml@main
+    with:
+      # https://github.com/orgs/community/discussions/26671
+      DEBFULLNAME: dionysius (github-actions)
+      DEBEMAIL: dragon.dionysius+gha@gmail.com
+      before_build_deps_install: |
+        export HOME=/root
+        if ! command -v rustup > /dev/null; then
+          curl https://sh.rustup.rs -sSf | sh -s -- -y
+          source "/root/.cargo/env"
+        fi
+        rustup toolchain install stable
+    secrets:
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
   release:
-    needs: packaging
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: check out
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-          path: source
-      - name: download artifacts
-        uses: actions/download-artifact@v3
-      - name: prepare changelog
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y dpkg-dev
-          pushd source
-          dpkg-parsechangelog -S Changes | tail -n+4 > ../changelog
-          popd
-      - name: release
-        uses: softprops/action-gh-release@v1
-        with:
-          prerelease: false
-          draft: false
-          fail_on_unmatched_files: true
-          body_path: changelog
-          files: |
-            results/*
+    if: startsWith(github.event.ref, 'refs/tags/debian')
+    needs: [build-native, build-qemu]
+    uses: dionysius/gbp-gha/.github/workflows/release.yml@main

@@ -1,2 +1,2 @@
-# Don't store .github
-extend-diff-ignore = "(^|/)(.github|LICENSE|README)"
+# Don't export non-debian files
+extend-diff-ignore = "(^|/)(.github|LICENSE|README|signing-key)"
