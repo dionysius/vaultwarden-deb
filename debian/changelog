@@ -1,3 +1,12 @@
+vaultwarden (1.27.0-2) unstable; urgency=medium
+
+  * use reusable github actions workflow
+  * sign packages
+  * offer debian stable
+  * offer some cross builds
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sun, 15 Jan 2023 14:54:26 +0100
+
 vaultwarden (1.27.0-1) unstable; urgency=medium
 
   * log folder not needed anymore
