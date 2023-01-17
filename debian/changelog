@@ -2,6 +2,8 @@ vaultwarden (1.27.0-3) unstable; urgency=medium
 
   * doesn't make sense to sign deb packages after changes file has already
     made checksums and been signed
+  * cross builds not feasible right now, github kills those jobs due to
+    probably running too long (also don't want to waste free ressources)
 
  -- dionysius <dragon.dionysius@gmail.com>  Sun, 15 Jan 2023 14:54:26 +0100
 vaultwarden (1.27.0-2) unstable; urgency=medium
