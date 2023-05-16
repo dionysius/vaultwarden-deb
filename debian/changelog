@@ -1,3 +1,11 @@
+vaultwarden (1.28.1-1) unstable; urgency=medium
+
+  * Add hint in postinst that vaultwarden recommends to use argon2 as admin token
+  * set wd and data dir owner to vaultwarden (closes #3)
+  * echo installation notes to stderr
+
+ -- dionysius <dragon.dionysius@gmail.com>  Tue, 16 May 2023 10:34:27 +0200
+
 vaultwarden (1.28.1-0) unstable; urgency=medium
 
   * update to 1.28.1
