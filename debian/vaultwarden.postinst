@@ -6,7 +6,7 @@ if [ "$1" = "configure" ]; then
   chown vaultwarden:vaultwarden /var/lib/vaultwarden /var/lib/vaultwarden/data
   if [ ! -f /etc/vaultwarden/admin_token ]; then
     openssl rand -base64 48 > /etc/vaultwarden/admin_token
-    echo "Plaintext admin token generated in /etc/vaultwarden/admin_token, Vaultwarden tough recommends to use Argon2" 1>&2
+    echo "Plaintext admin token generated in /etc/vaultwarden/admin_token, Vaultwarden though recommends to use Argon2" 1>&2
     echo "For details see: https://github.com/dani-garcia/vaultwarden/wiki/Enabling-admin-page#secure-the-admin_token" 1>&2
   fi
 fi
