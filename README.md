@@ -6,7 +6,11 @@ You will also need [vaultwarden-web-vault-deb](https://github.com/dionysius/vaul
 
 ## Download prebuilt packages
 
-Prebuild deb packages are available in the [releases section](https://github.com/dionysius/vaultwarden-deb/releases) for the latest Ubuntu LTS and Debian stable in various architectures (if applicable). They are automatically built in [Github Actions](https://github.com/dionysius/vaultwarden-deb/actions) and you can verify the signatures with this [signing-key](signing-key.pub).
+Prebuild deb and src packages are automatically built in [Github Actions](https://github.com/dionysius/vaultwarden-deb/actions) for the latest Ubuntu LTS and Debian stable in various architectures (if applicable).
+
+For manual installation they are available in the [releases section](https://github.com/dionysius/vaultwarden-deb/releases) and you can verify the signatures with this [signing-key](signing-key.pub).
+
+For using apt they are available on [packagecloud](https://packagecloud.io/dionysius/vaultwarden). See their [installation instructions](https://packagecloud.io/dionysius/vaultwarden/install#manual-deb) on how to setup the apt source. Be aware that they use a different signing key. [vaultwarden-web-vault-deb](https://github.com/dionysius/vaultwarden-web-vault-deb) is also automatically uploaded to this repo.
 
 ## Requirements
 

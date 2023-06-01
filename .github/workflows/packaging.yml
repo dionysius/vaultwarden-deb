@@ -47,3 +47,11 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/debian')
     needs: [build-native]
     uses: dionysius/gbp-gha/.github/workflows/release.yml@main
+  upload:
+    if: startsWith(github.event.ref, 'refs/tags/debian')
+    needs: [build-native]
+    uses: dionysius/gbp-gha/.github/workflows/upload-packagecloud.yml@main
+    with:
+      USERREPO: dionysius/vaultwarden
+    secrets:
+      PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
