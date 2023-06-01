@@ -1,3 +1,10 @@
+vaultwarden (1.28.1-2) unstable; urgency=medium
+
+  * fix typo in though
+  * add github actions apt upload, no package changes
+
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 01 Jun 2023 17:28:19 +0200
+
 vaultwarden (1.28.1-1) unstable; urgency=medium
 
   * Add hint in postinst that vaultwarden recommends to use argon2 as admin token
