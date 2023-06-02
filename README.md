@@ -32,5 +32,4 @@ For using apt they are available on [packagecloud](https://packagecloud.io/diony
 
 ## TODOs
 
-- Automatic upload to an apt provider
 - Automatic notification on new upstream releases. Optimally with automatic PR with those updates
