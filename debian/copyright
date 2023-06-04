@@ -3,18 +3,18 @@ Upstream-Name: vaultwarden
 Source: https://github.com/dani-garcia/vaultwarden
 
 Files: *
-Copyright: 2018-2022 vaultwarden contributors
-License: GPL-3+
+Copyright: 2018-2023 vaultwarden contributors
+License: AGPL-3
 Comment:
  Please refer to the contributors page of the upstream git for a complete list
 
 Files: debian/*
-Copyright: 2022 dionysius <dragon.dionysius@gmail.com>
+Copyright: 2022-2023 dionysius <dragon.dionysius@gmail.com>
 License: Expat
 
-License: GPL-3+
- On Debian systems, the complete text of the GNU General Public License version 3
- can be found in "/usr/share/common-licenses/GPL-3".
+License: AGPL-3
+ On Debian systems, the complete text of the GNU Affero General Public License
+ version 3 can be found in "/usr/share/common-licenses/AGPL-3".
 
 License: Expat
  Permission is hereby granted, free of charge, to any person obtaining a copy of
