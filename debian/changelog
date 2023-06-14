@@ -1,3 +1,10 @@
+vaultwarden (1.28.1-4) unstable; urgency=medium
+
+  * remove automatic generation of admin token (see issue for more info - closes: #5)
+  * new debian stable bookworm released, trigger CI to build package for it
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 14 Jun 2023 12:48:48 +0200
+
 vaultwarden (1.28.1-3) unstable; urgency=medium
 
   * apt provider done, remove todo from readme
