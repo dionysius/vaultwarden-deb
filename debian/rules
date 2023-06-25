@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+include /usr/share/dpkg/default.mk
+
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
 
@@ -13,11 +15,15 @@ cargoinstallargs = --config profile.release.opt-level=3 \
 									--config profile.release.split-debuginfo=\"off\" \
 									--config profile.release.strip=\"none\"
 
+# set version env so compilation can include it
+export VW_VERSION = $(DEB_VERSION_UPSTREAM)
+
 %:
 	dh $@
 
 # for now we build and install in one go
-# I really wanted to use [dh-cargo](https://packages.debian.org/sid/dh-cargo) but I couldn't get it to work (see branch [dh-cargo](https://github.com/dionysius/vaultwarden-deb/tree/dh-cargo/)). Weirdly the compile process happens in `dh_auto_test` instead of `dh_auto_bu>- I don't have any experience with rust and couldn't quite grasp how I could split the compiling and installing. For now there is one command that does everything in the `dh_auto_install` step.
+# I really wanted to use [dh-cargo](https://packages.debian.org/sid/dh-cargo) but I couldn't get it to work (see branch [dh-cargo](https://github.com/dionysius/vaultwarden-deb/tree/dh-cargo/)). Weirdly the compile process happens in `dh_auto_test` instead of `dh_auto_build`
+# I don't have any experience with rust and couldn't quite grasp how I could split the compiling and installing. For now there is one command that does everything in the `dh_auto_install` step.
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr
 	cargo install $(cargoinstallargs) --path . --features sqlite,mysql,postgresql --root debian/tmp
