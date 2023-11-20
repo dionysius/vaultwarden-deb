@@ -1,3 +1,10 @@
+vaultwarden (1.30.1-0) unstable; urgency=medium
+
+  * update to 1.30.1
+  * remove openssl licence override as all build targets are now on libssl 3.0+
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 20 Nov 2023 03:42:13 +0100
+
 vaultwarden (1.30.0-0) unstable; urgency=medium
 
   * update to 1.30.0
