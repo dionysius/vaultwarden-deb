@@ -8,6 +8,7 @@ Build-Depends: cargo,
                libsqlite3-dev,
                libssl-dev,
                pkg-config,
+               zlib1g-dev,
 Maintainer: dionysius <dragon.dionysius@gmail.com>
 Standards-Version: 4.6.1
 Vcs-Git: https://github.com/dionysius/vaultwarden-deb.git
