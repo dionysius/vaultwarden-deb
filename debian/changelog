@@ -1,4 +1,10 @@
-vaultwarden (1.30.3-0) UNRELEASED; urgency=medium
+vaultwarden (1.30.5-0) unstable; urgency=medium
+
+  * update to 1.30.5
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 06 Mar 2024 22:02:54 +0100
+
+vaultwarden (1.30.3-0) unstable; urgency=medium
 
   * update to 1.30.3
 
