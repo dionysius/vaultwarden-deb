@@ -21,7 +21,6 @@ For using apt they are available on [packagecloud](https://packagecloud.io/diony
   - Don't forget to look into your `*-updates`/`*-backports` apt sources for newer versions
   - This debian source also supports those installed with help of [`rustup`](https://rustup.rs)
     - Requires preloaded `rustup toolchain install <version>` before invoking packaging
-    - You can use `-d` when using `gbp buildpackage` to ignore all build-depends so you don't have to have `cargo` installed via dpkg. Still make sure the other build-depends listed in [debian/control](debian/control) are installed with `apt`/`dpkg`.
 
 ## Packaging
 
@@ -29,7 +28,7 @@ For using apt they are available on [packagecloud](https://packagecloud.io/diony
 - Switch to the folder: `cd vaultwarden-deb`
 - Build with git-buildpackage: `gbp buildpackage`
   - There are many arguments to fine-tune the build (see `gbp buildpackage --help` and `dpkg-buildpackage --help`)
-  - Notable options: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there)
+  - Notable options: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there), `-d` if you need to ignore build-depends (you probably still need them installed from a debian package)
 
 ## TODOs
 

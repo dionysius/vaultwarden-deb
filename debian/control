@@ -1,7 +1,7 @@
 Source: vaultwarden
 Section: misc
 Priority: optional
-Build-Depends: cargo,
+Build-Depends: rustup | cargo,
                debhelper-compat (= 13),
                libmariadb-dev-compat,
                libpq-dev,
