@@ -21,6 +21,7 @@ For using apt they are available on [packagecloud](https://packagecloud.io/diony
   - Don't forget to look into your `*-updates`/`*-backports` apt sources for newer versions
   - This debian source also supports those installed with help of [`rustup`](https://rustup.rs)
     - Requires preloaded `rustup toolchain install <version>` before invoking packaging
+    - You can use `-d` when using `gbp buildpackage` to ignore all build-depends so you don't have to have `cargo` installed via dpkg. Still make sure the other build-depends listed in [debian/control](debian/control) are installed with `apt`/`dpkg`.
 
 ## Packaging
 
