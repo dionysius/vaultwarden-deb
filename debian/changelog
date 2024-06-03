@@ -1,3 +1,9 @@
+vaultwarden (1.30.5-3) unstable; urgency=medium
+
+  * rustup will exist in the future instead of cargo package, offer both options, apt/dpkg should choose the correct one
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 03 Jun 2024 17:48:33 +0200
+
 vaultwarden (1.30.5-2) unstable; urgency=medium
 
   * when using rustup, the package cargo is optional. Explain and describe buildpackage option -d to ignore all build-depends #11
