@@ -1,3 +1,10 @@
+vaultwarden (1.30.5-2) unstable; urgency=medium
+
+  * when using rustup, the package cargo is optional. Explain and describe buildpackage option -d to ignore all build-depends #11
+  * use --locked during cargo install to use the package lock #12
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 03 Jun 2024 15:28:47 +0200
+
 vaultwarden (1.30.5-1) unstable; urgency=medium
 
   * no change, build for noble
