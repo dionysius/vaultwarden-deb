@@ -1,4 +1,10 @@
-vaultwarden (1.32.0-0) UNRELEASED; urgency=medium
+vaultwarden (1.32.1-0) unstable; urgency=medium
+
+  * update to 1.32.1
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 07 Oct 2024 18:29:32 +0200
+
+vaultwarden (1.32.0-0) unstable; urgency=medium
 
   * Update as soon as possible, contains security fixes: https://github.com/dani-garcia/vaultwarden/releases/tag/1.32.0
   * update to 1.32.0
