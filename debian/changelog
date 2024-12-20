@@ -1,3 +1,9 @@
+vaultwarden (1.32.7-0) unstable; urgency=medium
+
+  * update to 1.32.7
+
+ -- dionysius <dragon.dionysius@gmail.com>  Fri, 20 Dec 2024 14:56:14 +0100
+
 vaultwarden (1.32.6-0) unstable; urgency=medium
 
   * update to 1.32.6
