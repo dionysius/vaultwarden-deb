@@ -10,10 +10,10 @@ MAKEFLAGS += --no-print-directory
 export PATH := $(HOME)/.cargo/bin:$(PATH)
 
 # override release profile with optimizations, debug
-cargoinstallargs = --config profile.release.opt-level=3 \
-									--config profile.release.debug=true \
-									--config profile.release.split-debuginfo=\"off\" \
-									--config profile.release.strip=\"none\"
+cargoinstallargs =	--config profile.release.opt-level=3 \
+					--config profile.release.debug=true \
+					--config profile.release.split-debuginfo=\"off\" \
+					--config profile.release.strip=\"none\"
 
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
