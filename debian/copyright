@@ -3,13 +3,13 @@ Upstream-Name: vaultwarden
 Source: https://github.com/dani-garcia/vaultwarden
 
 Files: *
-Copyright: 2018-2023 vaultwarden contributors
+Copyright: 2018-2025 vaultwarden contributors
 License: AGPL-3
 Comment:
  Please refer to the contributors page of the upstream git for a complete list
 
 Files: debian/*
-Copyright: 2022-2023 dionysius <dragon.dionysius@gmail.com>
+Copyright: 2022-2025 dionysius <dragon.dionysius@gmail.com>
 License: Expat
 
 License: AGPL-3

@@ -30,6 +30,10 @@ For using apt they are available on [packagecloud](https://packagecloud.io/diony
   - There are many arguments to fine-tune the build (see `gbp buildpackage --help` and `dpkg-buildpackage --help`)
   - Notable options: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there), `-d` if you need to ignore build-depends (you probably still need them installed from a debian package)
 
+## After Installation
+
+- Configure vaultwarden service environment variables in `/etc/default/vaultwarden` and visit the [vaultwarden wiki](https://github.com/dani-garcia/vaultwarden/wiki) for additional resources
+
 ## TODOs
 
 - Automatic notification on new upstream releases. Optimally with automatic PR with those updates
