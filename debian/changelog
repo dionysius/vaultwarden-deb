@@ -1,3 +1,10 @@
+vaultwarden (1.33.2-0) unstable; urgency=medium
+
+  * update to 1.33.2, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.33.2
+  * cleanup and little docs improvements
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 10 Feb 2025 21:23:02 +0100
+
 vaultwarden (1.33.1-0) unstable; urgency=medium
 
   * update to 1.33.1
