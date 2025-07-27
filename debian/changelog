@@ -1,8 +1,9 @@
-vaultwarden (1.34.2-1) unstable; urgency=medium
+vaultwarden (1.34.2-2) unstable; urgency=medium
 
+  * fix version link in changelog
   * update to 1.34.2, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.34.2
 
- -- dionysius <dragon.dionysius@gmail.com>  Sun, 27 Jul 2025 22:04:36 +0200
+ -- dionysius <dragon.dionysius@gmail.com>  Sun, 27 Jul 2025 22:12:05 +0200
 
 vaultwarden (1.34.1-1) unstable; urgency=medium
 
