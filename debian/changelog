@@ -1,3 +1,9 @@
+vaultwarden (1.34.3-2) unstable; urgency=medium
+
+  * trigger build for trixie, no changes
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 17 Sep 2025 11:24:19 +0200
+
 vaultwarden (1.34.3-1) unstable; urgency=medium
 
   * update to 1.34.3, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.34.3
