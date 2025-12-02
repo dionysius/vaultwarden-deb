@@ -11,6 +11,18 @@ cargoinstallargs = --config profile.release.opt-level=3 \
                    --config profile.release.split-debuginfo=\"off\" \
                    --config profile.release.strip=\"none\"
 
+# Extract parallel jobs from DEB_BUILD_OPTIONS
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+export CARGO_BUILD_JOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+endif
+
+# Support features overrides from DEB_BUILD_OPTIONS
+ifneq (,$(filter features=%,$(DEB_BUILD_OPTIONS)))
+	cargoinstallargs += --features $(patsubst features=%,%,$(filter features=%,$(DEB_BUILD_OPTIONS)))
+else
+	cargoinstallargs += --features sqlite,mysql,postgresql
+endif
+
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
@@ -26,7 +38,7 @@ execute_before_dh_auto_configure:
 
 override_dh_auto_build:
 	echo $(DEB_BUILD_OPTIONS)
-	cargo build $(cargoinstallargs) --locked --offline --ignore-rust-version --features sqlite,mysql,postgresql --release
+	cargo build $(cargoinstallargs) --locked --offline --ignore-rust-version --release
 
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr/bin
