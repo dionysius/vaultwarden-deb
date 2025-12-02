@@ -15,6 +15,18 @@ cargoinstallargs = --config profile.release.opt-level=3 \
                    --config profile.release.split-debuginfo=\"off\" \
                    --config profile.release.strip=\"none\"
 
+# Extract parallel jobs from DEB_BUILD_OPTIONS
+ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+export CARGO_BUILD_JOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+endif
+
+# Support features overrides from DEB_BUILD_OPTIONS
+ifneq (,$(filter features=%,$(DEB_BUILD_OPTIONS)))
+	cargoinstallargs += --features $(patsubst features=%,%,$(filter features=%,$(DEB_BUILD_OPTIONS)))
+else
+	cargoinstallargs += --features sqlite,mysql,postgresql
+endif
+
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
@@ -25,7 +37,7 @@ export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 # I really wanted to use [dh-cargo](https://packages.debian.org/sid/dh-cargo) but I couldn't get it to work (see branch [dh-cargo](https://github.com/dionysius/vaultwarden-deb/tree/dh-cargo/)). Weirdly the compile process happens in `dh_auto_test` instead of `dh_auto_build`
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr
-	cargo install $(cargoinstallargs) --locked --path . --features sqlite,mysql,postgresql --root debian/tmp
+	cargo install $(cargoinstallargs) --locked --path . --root debian/tmp
 	mv debian/tmp/bin debian/tmp/usr
 
 # use upstream env template as defaults with some maintainer defaults
