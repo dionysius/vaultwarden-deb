@@ -1,0 +1,5 @@
+{
+  "apiurl": "https://api.opensuse.org",
+  "project": "home:dionysius:vaultwarden",
+  "package": "vaultwarden"
+}

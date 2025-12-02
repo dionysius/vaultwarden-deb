@@ -2,12 +2,13 @@ Source: vaultwarden
 Section: misc
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
+               cargo,
+               rustc,
                libmariadb-dev-compat,
                libpq-dev,
                libsqlite3-dev,
                libssl-dev,
                pkg-config,
-               rustup | cargo,
                zlib1g-dev,
 Maintainer: dionysius <dragon.dionysius@gmail.com>
 Standards-Version: 4.6.1

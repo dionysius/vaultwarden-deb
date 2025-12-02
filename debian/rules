@@ -5,10 +5,6 @@ include /usr/share/dpkg/default.mk
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
 
-# use cargo provided by rustup if available. Remove for correct debian policy.
-# I had to make a compatibility to allow `cargo` to be provided with help of `rustup` since my distro didn't provide a recent enough version. Only using official apt sources would be cleaner.
-export PATH := $(HOME)/.cargo/bin:$(PATH)
-
 # override release profile with optimizations, debug
 cargoinstallargs = --config profile.release.opt-level=3 \
                    --config profile.release.debug=true \
@@ -19,14 +15,22 @@ cargoinstallargs = --config profile.release.opt-level=3 \
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
 %:
-	dh $@
+	dh $@ --parallel
 
 # In rust there seems to be no build step so build and install in one go
 # I really wanted to use [dh-cargo](https://packages.debian.org/sid/dh-cargo) but I couldn't get it to work (see branch [dh-cargo](https://github.com/dionysius/vaultwarden-deb/tree/dh-cargo/)). Weirdly the compile process happens in `dh_auto_test` instead of `dh_auto_build`
+
+execute_before_dh_auto_configure:
+	mkdir -p .cargo
+	cp debian/config.toml .cargo/config.toml
+
+override_dh_auto_build:
+	echo $(DEB_BUILD_OPTIONS)
+	cargo build $(cargoinstallargs) --locked --offline --ignore-rust-version --features sqlite,mysql,postgresql --release
+
 override_dh_auto_install:
-	mkdir -p debian/tmp/usr
-	cargo install $(cargoinstallargs) --locked --path . --features sqlite,mysql,postgresql --root debian/tmp
-	mv debian/tmp/bin debian/tmp/usr
+	mkdir -p debian/tmp/usr/bin
+	install -m755 target/release/vaultwarden debian/tmp/usr/bin/
 
 # use upstream env template as defaults with some maintainer defaults
 	mv .env.template debian/vaultwarden.default
