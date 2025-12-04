@@ -1,7 +1,0 @@
-<services>
-  <service name="cargo_vendor" mode="manual">
-    <param name="srcdir">vaultwarden-1.34.3</param>
-    <param name="compression">xz</param>
-    <param name="update">true</param>
-  </service>
-</services>

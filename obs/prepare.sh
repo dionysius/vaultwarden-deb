@@ -1,46 +1,51 @@
 #!/bin/bash
 # Prepare all OBS build artifacts
-# This is the main script that runs all preparation steps in order
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUILD_DIR="${BUILD_DIR:-$SCRIPT_DIR/build}"
+METADATA_FILE="$SCRIPT_DIR/metadata.json"
 
-echo "========================================="
-echo "OBS Build Preparation"
-echo "========================================="
-echo ""
+cd "$REPO_ROOT"
 
-# Step 1: Setup git-obs metadata
-echo "Step 1/5: Setting up git-obs metadata"
-echo "-----------------------------------------"
-"$SCRIPT_DIR/01-setup-metadata.sh"
-echo ""
+# Setup git-obs metadata
+if [ ! -f "$METADATA_FILE" ]; then
+    echo "Error: $METADATA_FILE not found"
+    exit 1
+fi
 
-# Step 2: Generate orig tarball
-echo "Step 2/5: Generating orig tarball"
-echo "-----------------------------------------"
-"$SCRIPT_DIR/02-generate-orig.sh"
-echo ""
+apiurl=$(jq -r '.apiurl' "$METADATA_FILE")
+project=$(jq -r '.project' "$METADATA_FILE")
+package=$(jq -r '.package' "$METADATA_FILE")
+git-obs meta set --apiurl="$apiurl" --project="$project" --package="$package" >/dev/null 2>&1
 
-# Step 3: Vendor cargo dependencies (most time-consuming)
-echo "Step 3/5: Vendoring cargo dependencies"
-echo "-----------------------------------------"
-"$SCRIPT_DIR/03-vendor-cargo.sh"
-echo ""
+# Generate orig tarballs (main + vendor)
+gbp export-orig >/dev/null 2>&1
 
-# Step 4: Generate Debian source package
-echo "Step 4/5: Generating Debian source package"
-echo "-----------------------------------------"
-"$SCRIPT_DIR/04-generate-dsc.sh"
-echo ""
+# Generate Debian source package
+dpkg-source -i --extend-diff-ignore="^(?!debian/).*" -b . >/dev/null 2>&1
 
-# Step 5: Copy artifacts to build directory
-echo "Step 5/5: Copying artifacts to build directory"
-echo "-----------------------------------------"
-"$SCRIPT_DIR/05-copy-artifacts.sh"
-echo ""
+# Prepare build directory and copy artifacts
+PACKAGE_NAME=$(dpkg-parsechangelog -S Source)
+VERSION=$(dpkg-parsechangelog -S Version)
+UPSTREAM_VERSION=$(echo "$VERSION" | cut -d- -f1)
 
-echo "========================================="
-echo "✓ All preparation steps completed"
-echo "========================================="
+mkdir -p "$BUILD_DIR"
+
+ORIG_TARBALL="../${PACKAGE_NAME}_${UPSTREAM_VERSION}.orig.tar.gz"
+VENDOR_TARBALL="../${PACKAGE_NAME}_${UPSTREAM_VERSION}.orig-vendor.tar.xz"
+DSC_FILE="../${PACKAGE_NAME}_${VERSION}.dsc"
+DEBIAN_TARBALL="../${PACKAGE_NAME}_${VERSION}.debian.tar.xz"
+
+# Verify and copy all required files
+for file in "$ORIG_TARBALL" "$VENDOR_TARBALL" "$DSC_FILE" "$DEBIAN_TARBALL"; do
+    if [ ! -f "$file" ]; then
+        echo "Error: $(basename "$file") not found"
+        exit 1
+    fi
+    cp "$file" "$BUILD_DIR/"
+done
+
+echo "✓ Build ready: $BUILD_DIR"

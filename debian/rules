@@ -5,6 +5,10 @@ include /usr/share/dpkg/default.mk
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
 
+# use cargo provided by rustup if available. Remove for correct debian policy.
+# I had to make a compatibility to allow `cargo` to be provided with help of `rustup` since my distro didn't provide a recent enough version. Only using official apt sources would be cleaner.
+export PATH := $(HOME)/.cargo/bin:$(PATH)
+
 # override release profile with optimizations, debug
 cargoinstallargs = --config profile.release.opt-level=3 \
                    --config profile.release.debug=true \
@@ -18,9 +22,9 @@ endif
 
 # Support features overrides from DEB_BUILD_OPTIONS
 ifneq (,$(filter features=%,$(DEB_BUILD_OPTIONS)))
-	cargoinstallargs += --features $(patsubst features=%,%,$(filter features=%,$(DEB_BUILD_OPTIONS)))
+cargoinstallargs += --features $(patsubst features=%,%,$(filter features=%,$(DEB_BUILD_OPTIONS)))
 else
-	cargoinstallargs += --features sqlite,mysql,postgresql
+cargoinstallargs += --features sqlite,mysql,postgresql
 endif
 
 # set version env so compilation can include it
@@ -37,7 +41,6 @@ execute_before_dh_auto_configure:
 	cp debian/config.toml .cargo/config.toml
 
 override_dh_auto_build:
-	echo $(DEB_BUILD_OPTIONS)
 	cargo build $(cargoinstallargs) --locked --offline --ignore-rust-version --release
 
 override_dh_auto_install:
