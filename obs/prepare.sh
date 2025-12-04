@@ -19,25 +19,31 @@ fi
 apiurl=$(jq -r '.apiurl' "$METADATA_FILE")
 project=$(jq -r '.project' "$METADATA_FILE")
 package=$(jq -r '.package' "$METADATA_FILE")
-git-obs meta set --apiurl="$apiurl" --project="$project" --package="$package" >/dev/null 2>&1
+git-obs meta set --apiurl="$apiurl" --project="$project" --package="$package"
 
-# Generate orig tarballs (main + vendor)
-gbp export-orig >/dev/null 2>&1
+# Get package information using dpkg's Makefile helpers
+eval "$(make -s -f /usr/share/dpkg/pkg-info.mk -f - <<'EOF'
+all:
+	@echo "DEB_SOURCE=$(DEB_SOURCE)"
+	@echo "DEB_VERSION=$(DEB_VERSION)"
+	@echo "DEB_VERSION_UPSTREAM=$(DEB_VERSION_UPSTREAM)"
+EOF
+)"
+
+# Generate orig tarballs
+gbp export-orig
+git archive vendor/$DEB_VERSION_UPSTREAM -o ../${DEB_SOURCE}_${DEB_VERSION_UPSTREAM}.orig-vendor.tar.gz
 
 # Generate Debian source package
-dpkg-source -i --extend-diff-ignore="^(?!debian/).*" -b . >/dev/null 2>&1
+dpkg-source -i --extend-diff-ignore="^(?!debian/).*" -b .
 
 # Prepare build directory and copy artifacts
-PACKAGE_NAME=$(dpkg-parsechangelog -S Source)
-VERSION=$(dpkg-parsechangelog -S Version)
-UPSTREAM_VERSION=$(echo "$VERSION" | cut -d- -f1)
-
 mkdir -p "$BUILD_DIR"
 
-ORIG_TARBALL="../${PACKAGE_NAME}_${UPSTREAM_VERSION}.orig.tar.gz"
-VENDOR_TARBALL="../${PACKAGE_NAME}_${UPSTREAM_VERSION}.orig-vendor.tar.xz"
-DSC_FILE="../${PACKAGE_NAME}_${VERSION}.dsc"
-DEBIAN_TARBALL="../${PACKAGE_NAME}_${VERSION}.debian.tar.xz"
+ORIG_TARBALL="../${DEB_SOURCE}_${DEB_VERSION_UPSTREAM}.orig.tar.gz"
+VENDOR_TARBALL="../${DEB_SOURCE}_${DEB_VERSION_UPSTREAM}.orig-vendor.tar.gz"
+DSC_FILE="../${DEB_SOURCE}_${DEB_VERSION}.dsc"
+DEBIAN_TARBALL="../${DEB_SOURCE}_${DEB_VERSION}.debian.tar.xz"
 
 # Verify and copy all required files
 for file in "$ORIG_TARBALL" "$VENDOR_TARBALL" "$DSC_FILE" "$DEBIAN_TARBALL"; do
@@ -45,7 +51,7 @@ for file in "$ORIG_TARBALL" "$VENDOR_TARBALL" "$DSC_FILE" "$DEBIAN_TARBALL"; do
         echo "Error: $(basename "$file") not found"
         exit 1
     fi
-    cp "$file" "$BUILD_DIR/"
+    mv "$file" "$BUILD_DIR/"
 done
 
 echo "✓ Build ready: $BUILD_DIR"

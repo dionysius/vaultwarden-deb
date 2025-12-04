@@ -30,18 +30,17 @@ endif
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
-%:
-	dh $@ --parallel
-
-# In rust there seems to be no build step so build and install in one go
 # I really wanted to use [dh-cargo](https://packages.debian.org/sid/dh-cargo) but I couldn't get it to work (see branch [dh-cargo](https://github.com/dionysius/vaultwarden-deb/tree/dh-cargo/)). Weirdly the compile process happens in `dh_auto_test` instead of `dh_auto_build`
+%:
+	dh $@
 
 execute_before_dh_auto_configure:
 	mkdir -p .cargo
 	cp debian/config.toml .cargo/config.toml
 
 override_dh_auto_build:
-	cargo build $(cargoinstallargs) --locked --offline --ignore-rust-version --release
+# --ignore-rust-version (for osc build) as well as remove rustup from build-dependencies
+	cargo build $(cargoinstallargs) --locked --offline --release
 
 override_dh_auto_install:
 	mkdir -p debian/tmp/usr/bin
