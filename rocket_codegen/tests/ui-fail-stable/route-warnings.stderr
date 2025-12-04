@@ -1,0 +1,5 @@
+error: checking for warnings!
+  --> tests/ui-fail-stable/route-warnings.rs:33:5
+   |
+33 |     compile_error!("checking for warnings!")
+   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
