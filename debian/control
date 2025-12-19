@@ -7,7 +7,7 @@ Build-Depends: debhelper-compat (= 13),
                libsqlite3-dev,
                libssl-dev,
                pkg-config,
-               rustup | cargo,
+#               rustup | cargo,
                zlib1g-dev,
 Maintainer: dionysius <dragon.dionysius@gmail.com>
 Standards-Version: 4.6.1

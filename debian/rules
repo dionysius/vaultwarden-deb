@@ -5,9 +5,11 @@ include /usr/share/dpkg/default.mk
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
 
-# use cargo provided by rustup if available. Remove for correct debian policy.
-# I had to make a compatibility to allow `cargo` to be provided with help of `rustup` since my distro didn't provide a recent enough version. Only using official apt sources would be cleaner.
+# use cargo provided by rustup if available
 export PATH := $(HOME)/.cargo/bin:$(PATH)
+# use cargo provided by vendored rust if available (obs build)
+export PATH := debian/rust/bin:$(PATH)
+# export LD_LIBRARY_PATH := debian/rust/lib:$(LD_LIBRARY_PATH)
 
 # override release profile with optimizations, debug
 cargoinstallargs = --config profile.release.opt-level=3 \
@@ -35,17 +37,29 @@ export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 	dh $@
 
 execute_before_dh_auto_configure:
-	ls -lah
 	mkdir -p .cargo
-	cp debian/config.toml .cargo/config.toml
+	install debian/config.toml .cargo/config.toml
+	./rust-$(DEB_BUILD_ARCH)/install.sh --components=cargo,rustc,rust-std-$(DEB_BUILD_GNU_CPU)-unknown-linux-gnu --disable-ldconfig --prefix=debian/rust
+	rm -rf rust-*
+	ls -lah debian/rust
+	which rustc
+	which cargo
 
 override_dh_auto_build:
-# --ignore-rust-version (for osc build) as well as remove rustup from build-dependencies
-	cargo build $(cargoinstallargs) --locked --offline --release
+# # --ignore-rust-version (for osc build) as well as remove rustup from build-dependencies
+# # --locked preferred
+# 	printenv LD_LIBRARY_PATH
+	printenv PATH
+	rustc -vV
+	cargo build $(cargoinstallargs) --locked --offline --target-dir target
 
 override_dh_auto_install:
+	cat .cargo/config.toml
 	mkdir -p debian/tmp/usr/bin
 	install -m755 target/release/vaultwarden debian/tmp/usr/bin/
+# 	mkdir -p debian/tmp/usr
+# 	cargo install $(cargoinstallargs) --offline --locked --path . --root debian/tmp
+# 	mv debian/tmp/bin debian/tmp/usr
 
 # use upstream env template as defaults with some maintainer defaults
 	mv .env.template debian/vaultwarden.default
