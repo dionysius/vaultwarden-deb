@@ -35,6 +35,7 @@ export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 	dh $@
 
 execute_before_dh_auto_configure:
+	ls -lah
 	mkdir -p .cargo
 	cp debian/config.toml .cargo/config.toml
 
