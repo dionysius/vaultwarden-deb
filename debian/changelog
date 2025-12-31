@@ -1,3 +1,9 @@
+vaultwarden (1.35.1-1) unstable; urgency=medium
+
+  * update to 1.35.1, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.1
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 31 Dec 2025 11:51:01 +0100
+
 vaultwarden (1.35.0-1) unstable; urgency=medium
 
   * update to 1.35.0, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.0
