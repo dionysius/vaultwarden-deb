@@ -47,6 +47,7 @@ jobs:
     if: startsWith(github.event.ref, 'refs/tags/debian')
     needs: [build-native]
     uses: dionysius/gbp-gha/.github/workflows/release.yml@main
+# TODO: remove after year 2026
   upload:
     if: startsWith(github.event.ref, 'refs/tags/debian')
     needs: [build-native]

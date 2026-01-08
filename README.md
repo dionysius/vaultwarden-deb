@@ -10,7 +10,7 @@ Prebuild deb and src packages are automatically built in [Github Actions](https:
 
 For manual installation they are available in the [releases section](https://github.com/dionysius/vaultwarden-deb/releases) and you can verify the signatures with this [signing-key](signing-key.pub).
 
-For using apt they are available on [packagecloud](https://packagecloud.io/dionysius/vaultwarden). See their [installation instructions](https://packagecloud.io/dionysius/vaultwarden/install#manual-deb) on how to setup the apt source. Be aware that they use a different signing key. [vaultwarden-web-vault-deb](https://github.com/dionysius/vaultwarden-web-vault-deb) is also automatically uploaded to this repo.
+For using apt they are available on [apt.crunchy.run](https://apt.crunchy.run/vaultwarden). Refer to the installation instructions there on how to setup the apt source. [vaultwarden-web-vault-deb](https://github.com/dionysius/vaultwarden-web-vault-deb) is also available in this repo.
 
 ## Requirements
 
