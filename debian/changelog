@@ -1,3 +1,11 @@
+vaultwarden (1.35.2-1) unstable; urgency=medium
+
+  * update to 1.35.2, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.2
+  * Important: New APT repository, see README. Switch until end of 2026
+  * minor gbp config changes
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sat, 10 Jan 2026 06:14:12 +0100
+
 vaultwarden (1.35.1-1) unstable; urgency=medium
 
   * update to 1.35.1, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.1
