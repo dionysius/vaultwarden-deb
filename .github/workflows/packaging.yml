@@ -14,10 +14,14 @@ jobs:
 
   build-native:
     uses: dionysius/gbp-gha/.github/workflows/gbp-native.yml@main
+    secrets:
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
     with:
       # https://github.com/orgs/community/discussions/26671
       DEBFULLNAME: dionysius (github-actions)
       DEBEMAIL: dragon.dionysius+gha@gmail.com
+      distros: '["ubuntu:latest", "debian:stable", "debian:oldstable"]'
+      architectures: '["amd64", "arm64"]'
       before_build_deps_install: |
         source "$HOME/.cargo/env" || true
         if ! command -v rustup > /dev/null; then
@@ -25,34 +29,33 @@ jobs:
           source "$HOME/.cargo/env"
         fi
         rustup toolchain install stable
-    secrets:
-      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-  # build-qemu:
-  #   uses: dionysius/gbp-gha/.github/workflows/gbp-qemu.yml@main
-  #   with:
-  #     # https://github.com/orgs/community/discussions/26671
-  #     DEBFULLNAME: dionysius (github-actions)
-  #     DEBEMAIL: dragon.dionysius+gha@gmail.com
-  #     before_build_deps_install: |
-  #       export HOME=/root
-  #       source "/root/.cargo/env" || true
-  #       if ! command -v rustup > /dev/null; then
-  #         curl https://sh.rustup.rs -sSf | sh -s -- -y
-  #         source "/root/.cargo/env"
-  #       fi
-  #       rustup toolchain install stable
-  #   secrets:
-  #     GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
   release:
     if: startsWith(github.event.ref, 'refs/tags/debian')
     needs: [build-native]
     uses: dionysius/gbp-gha/.github/workflows/release.yml@main
-# TODO: remove after year 2026
-  upload:
-    if: startsWith(github.event.ref, 'refs/tags/debian')
-    needs: [build-native]
-    uses: dionysius/gbp-gha/.github/workflows/upload-packagecloud.yml@main
     with:
-      USERREPO: dionysius/vaultwarden
-    secrets:
-      PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+      publish: true
+
+# TODO: remove after year 2026
+  upload-packagecloud:
+    name: upload to packagecloud
+    needs: [build-native]
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+      - name: install
+        run: |
+          sudo gem install package_cloud
+          echo "PACKAGECLOUD_TOKEN=${{ secrets.PACKAGECLOUD_TOKEN }}" >> $GITHUB_ENV
+      - name: upload
+        run: |
+          for resultdir in $(ls -d results_*); do
+            # Extract vendor from folder name: results_ubuntu-latest_amd64 -> ubuntu
+            vendor=$(echo "$resultdir" | sed 's/^results_\([^-]*\).*/\1/')
+            dist=$(grep -oP "Distribution: \K\w+" $resultdir/*.changes | head -n1)
+            find $resultdir -name "*.deb" -not -name "*-dbgsym*" -print | xargs -r package_cloud push dionysius/vaultwarden/$vendor/$dist
+            find $resultdir -name "*.dsc" -print | xargs -r package_cloud push dionysius/vaultwarden/$vendor/$dist
+          done
