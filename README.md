@@ -14,7 +14,7 @@ curl -fsSL https://apt.crunchy.run/vaultwarden/install.sh | sudo bash -
 sudo apt install vaultwarden
 ```
 
-Alternatively, download prebuilt packages from the [releases section](https://github.com/dionysius/immich-deb/releases) and verify signatures with the [signing-key](signing-key.pub). Packages are automatically built in [Github Actions](https://github.com/dionysius/immich-deb/actions). You will also need [vaultwarden-web-vault-deb](https://github.com/dionysius/vaultwarden-web-vault-deb).
+Alternatively, download prebuilt packages from the [releases section](https://github.com/dionysius/vaultwarden-deb/releases) and verify signatures with the [signing-key](signing-key.pub). Packages are automatically built in [Github Actions](https://github.com/dionysius/vaultwarden-deb/actions). You will also need [vaultwarden-web-vault-deb](https://github.com/dionysius/vaultwarden-web-vault-deb).
 
 ## Configuration
 
@@ -23,7 +23,7 @@ After installation, you can configure the service to your liking by editing `/et
 ## Issues
 
 - [Get in touch](https://github.com/dani-garcia/vaultwarden/wiki#get-in-touch) - For issues with Vaultwarden
-- [Issues](https://github.com/dionysius/immich-deb/issues) and [Discussions](https://github.com/dionysius/immich-deb/discussions) - For issues with or related to these packages
+- [Issues](https://github.com/dionysius/vaultwarden-deb/issues) and [Discussions](https://github.com/dionysius/vaultwarden-deb/discussions) - For issues with or related to these packages
 
 ## Build source package
 
