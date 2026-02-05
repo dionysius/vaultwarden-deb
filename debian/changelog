@@ -1,3 +1,10 @@
+vaultwarden (1.35.2-2) unstable; urgency=medium
+
+  * add arm64 and debian oldstable to build pipeline, arm64 packages are now available
+  * this is the first build using immutable releases and release attestation!
+
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 05 Feb 2026 08:58:03 +0100
+
 vaultwarden (1.35.2-1) unstable; urgency=medium
 
   * update to 1.35.2, see also: https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.2
