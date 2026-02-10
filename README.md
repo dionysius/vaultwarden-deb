@@ -4,7 +4,7 @@ Easy to install and highly configurable debian packages for running [Vaultwarden
 
 ## Installation
 
-The easiest way to install vaultwarden is using the apt repository on [apt.crunchy.run/immich](https://apt.crunchy.run/immich). Installation instructions are available directly on the repository page.
+The easiest way to install vaultwarden is using the apt repository on [apt.crunchy.run/vaultwarden](https://apt.crunchy.run/vaultwarden). Installation instructions are available directly on the repository page.
 
 Quick installation:
 
