@@ -20,7 +20,7 @@ jobs:
       # https://github.com/orgs/community/discussions/26671
       DEBFULLNAME: dionysius (github-actions)
       DEBEMAIL: dragon.dionysius+gha@gmail.com
-      distros: '["ubuntu:latest", "debian:stable", "debian:oldstable"]'
+      images: '["ubuntu:latest", "debian:stable", "debian:oldstable"]'
       architectures: '["amd64", "arm64"]'
       before_build_deps_install: |
         source "$HOME/.cargo/env" || true
@@ -35,7 +35,15 @@ jobs:
     needs: [build-native]
     uses: dionysius/gbp-gha/.github/workflows/release.yml@main
     with:
+      prerelease: true
       publish: true
+
+  promote:
+    uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@main
+    needs: [release]
+    with:
+      in_days: 7
+      release_pattern: '{debian/*.*}.*'
 
 # TODO: remove after year 2026
   upload-packagecloud:

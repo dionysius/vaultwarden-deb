@@ -25,6 +25,10 @@ After installation, you can configure the service to your liking by editing `/et
 - [Get in touch](https://github.com/dani-garcia/vaultwarden/wiki#get-in-touch) - For issues with Vaultwarden
 - [Issues](https://github.com/dionysius/vaultwarden-deb/issues) and [Discussions](https://github.com/dionysius/vaultwarden-deb/discussions) - For issues with or related to these packages
 
+## Release schedule
+
+This project aims to closely match the releases of upstream. The first release in each minor version series starts as a prerelease with a 7-day waiting period to allow upstream to fix oversights in new features or changes. Subsequent releases follow the same waiting period. After the waiting period has passed, all prereleases are automatically promoted to normal releases including new releases.
+
 ## Build source package
 
 This debian source package builds [Vaultwarden](https://github.com/dani-garcia/vaultwarden) natively on your build environment. No annoying docker! It is managed with [git-buildpackage](https://wiki.debian.org/PackagingWithGit) and aims to be a pretty good quality debian source package. You can find the maintaining command summary in [debian/gbp.conf](debian/gbp.conf).

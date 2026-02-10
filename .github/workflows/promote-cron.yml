@@ -1,0 +1,13 @@
+name: Promote Releases
+
+on:
+  schedule:
+    - cron: '0 3 * * *' 
+  workflow_dispatch:
+
+jobs:
+  promote:
+    uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@main
+    with:
+      in_days: 7
+      release_pattern: '{debian/*.*}.*'
