@@ -1,3 +1,11 @@
+vaultwarden (1.35.3-1) unstable; urgency=medium
+
+  * Update as soon as possible, contains security fixes
+  * update to 1.35.3, see also https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.3
+  * introduce release schedule, first minor starts waiting timer
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 11 Feb 2026 09:05:17 +0100
+
 vaultwarden (1.35.2-2) unstable; urgency=medium
 
   * add arm64 and debian oldstable to build pipeline, arm64 packages are now available
