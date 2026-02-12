@@ -61,3 +61,7 @@ gbp buildpackage -b -us -uc
 ```
 
 On successful build packages can now be found in the parent directory `ls ../*.deb`.
+
+## Inspirations and Alternatives
+
+- [vaultwarden third party packages](https://github.com/dani-garcia/vaultwarden/wiki/Third-party-packages)
