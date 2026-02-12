@@ -47,7 +47,7 @@ jobs:
 
 # TODO: remove after year 2026
   upload-packagecloud:
-    name: upload to packagecloud
+    if: startsWith(github.event.ref, 'refs/tags/debian')
     needs: [build-native]
     runs-on: ubuntu-24.04
 
