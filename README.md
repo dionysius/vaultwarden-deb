@@ -1,6 +1,6 @@
 # Vaultwarden deb packages
 
-Easy to install and highly configurable debian packages for running [Vaultwarden](https://github.com/dani-garcia/vaultwarden) on your system natively without docker - with mysql, postgresql and sqlite support. Out of the box it can be installed and built on Debian stable, Debian oldstable and latest Ubuntu LTS.
+Easy to install and highly configurable debian packages for running [Vaultwarden](https://github.com/dani-garcia/vaultwarden) on your system natively without docker - with mysql, postgresql, sqlite and s3 support. Out of the box it can be installed and built on Debian stable, Debian oldstable and latest Ubuntu LTS.
 
 ## Installation
 
