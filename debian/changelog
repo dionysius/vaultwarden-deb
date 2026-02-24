@@ -1,3 +1,12 @@
+vaultwarden (1.35.4-1) unstable; urgency=medium
+
+  * update to 1.35.4, see also https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.4
+  * update as soon as possible, contains security fixes
+  * add s3 support, enable feature flag s3 during build
+  * debian policy 4.7.2 package updates
+
+ -- dionysius <dragon.dionysius@gmail.com>  Tue, 24 Feb 2026 12:01:29 +0100
+
 vaultwarden (1.35.3-1) unstable; urgency=medium
 
   * Update as soon as possible, contains security fixes
