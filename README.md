@@ -43,7 +43,7 @@ Installed build dependencies as defined in [debian/control `Build-Depends`](debi
 mk-build-deps -i -r debian/control -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes"
 ```
 
-If `rust`/`cargo` is not recent enough don't forget to look into your `*-updates`/`*-backports` apt sources for newer versions or use [`rustup`](https://rustup.rs) (requires preloaded `rustup toolchain install <version>` before invoking packaging)
+If `rust`/`cargo` is not recent enough don't forget to look into your `*-updates`/`*-backports` apt sources for newer versions or use [`rustup`](https://rustup.rs).
 
 ### Build package
 
@@ -61,6 +61,14 @@ gbp buildpackage -b -us -uc
 ```
 
 On successful build packages can now be found in the parent directory `ls ../*.deb`.
+
+### Cross-building for other architectures
+
+Add the target architecture with `dpkg --add-architecture <arch>` and update package lists with `apt update`.
+
+Install build dependencies using mk-build-deps from above with additional `--host-arch <arch>` flag.
+
+Use the build command from above with additional `-a<arch>` and `-Pcross,nocheck` flags.
 
 ## Inspirations and Alternatives
 

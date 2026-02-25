@@ -7,7 +7,7 @@ on:
 
 jobs:
   promote:
-    uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@main
+    uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@devel
     with:
       in_days: 7
       release_pattern: '{debian/*.*}.*'

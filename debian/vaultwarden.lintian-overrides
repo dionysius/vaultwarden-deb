@@ -1,0 +1,2 @@
+# manual page at -doc package due to help2man restrictions when crossbuilding
+no-manual-page
