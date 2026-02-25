@@ -1,5 +1,6 @@
 name: deb packaging
 
+        
 on:
   push:
     tags:
@@ -12,8 +13,8 @@ concurrency:
 
 jobs:
 
-  build-native:
-    uses: dionysius/gbp-gha/.github/workflows/gbp-native.yml@main
+  build:
+    uses: dionysius/gbp-gha/.github/workflows/build.yml@devel
     secrets:
       GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
     with:
@@ -21,25 +22,26 @@ jobs:
       DEBFULLNAME: dionysius (github-actions)
       DEBEMAIL: dragon.dionysius+gha@gmail.com
       images: '["ubuntu:latest", "debian:stable", "debian:oldstable"]'
-      architectures: '["amd64", "arm64"]'
+      architectures: '["amd64", "arm64", "riscv64"]'
       before_build_deps_install: |
-        source "$HOME/.cargo/env" || true
-        if ! command -v rustup > /dev/null; then
-          curl https://sh.rustup.rs -sSf | sh -s -- -y
-          source "$HOME/.cargo/env"
+        # install rustup manually if not available as distribution package (fallback)
+        # mk-build-deps would install rustup if available
+        # no need to source the env since cargo/rustup is only run in rules
+        # rustup or cargo will install upstream referenced toolchain and target automatically once invoked in rules
+        if [ -z "$(apt-cache madison rustup 2>/dev/null)" ]; then
+          curl -fsSL https://sh.rustup.rs | sh -s -- -y --default-toolchain none
         fi
-        rustup toolchain install stable
 
   release:
     if: startsWith(github.event.ref, 'refs/tags/debian')
-    needs: [build-native]
-    uses: dionysius/gbp-gha/.github/workflows/release.yml@main
+    needs: [build]
+    uses: dionysius/gbp-gha/.github/workflows/release.yml@devel
     with:
       prerelease: true
       publish: true
 
   promote:
-    uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@main
+    uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@devel
     needs: [release]
     with:
       in_days: 7
@@ -48,7 +50,7 @@ jobs:
 # TODO: remove after year 2026
   upload-packagecloud:
     if: startsWith(github.event.ref, 'refs/tags/debian')
-    needs: [build-native]
+    needs: [build]
     runs-on: ubuntu-24.04
 
     steps:

@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
 include /usr/share/dpkg/default.mk
+include /usr/share/dpkg/buildtools.mk
 
 export DH_VERBOSE = 1
 MAKEFLAGS += --no-print-directory
@@ -15,9 +16,9 @@ cargoinstallargs = --config profile.release.opt-level=3 \
                    --config profile.release.split-debuginfo=\"off\" \
                    --config profile.release.strip=\"none\"
 
-# Extract parallel jobs from DEB_BUILD_OPTIONS
-ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
-export CARGO_BUILD_JOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+# Use official DEB_BUILD_OPTION_PARALLEL from buildopts.mk
+ifdef DEB_BUILD_OPTION_PARALLEL
+export CARGO_BUILD_JOBS = $(DEB_BUILD_OPTION_PARALLEL)
 endif
 
 # Support features overrides from DEB_BUILD_OPTIONS
@@ -30,8 +31,31 @@ endif
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
+# if crossbuilding
+ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+# configure pkg-config
+export PKG_CONFIG = pkgconf
+export PKG_CONFIG_LIBDIR = /usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig:/usr/share/pkgconfig
+export PKG_CONFIG_ALLOW_CROSS = 1
+# convert GNU triplet to Rust target triple
+export CARGO_BUILD_TARGET = $(subst -linux-,-unknown-linux-,$(DEB_HOST_GNU_TYPE))
+# special cases where Debian arch doesn't directly map to Rust target
+ifeq ($(DEB_HOST_ARCH),armhf)
+	export CARGO_BUILD_TARGET = armv7-unknown-linux-gnueabihf
+endif
+ifeq ($(DEB_HOST_ARCH),riscv64)
+	export CARGO_BUILD_TARGET = riscv64gc-unknown-linux-gnu
+endif
+# configure linker for cargo
+export CARGO_TARGET_$(subst -,_,$(shell echo $(CARGO_BUILD_TARGET) | tr '[:lower:]' '[:upper:]'))_LINKER = $(CC)
+endif
+
 %:
 	dh $@
+
+override_dh_auto_configure:
+# Download toolchain/targets (not strictly required for native builds but debloats cargo install)
+	@command -v rustup >/dev/null && rustup target add "$(CARGO_BUILD_TARGET)" || :
 
 # In rust there seems to be no build step so build and install in one go
 # I really wanted to use [dh-cargo](https://packages.debian.org/sid/dh-cargo) but I couldn't get it to work (see branch [dh-cargo](https://github.com/dionysius/vaultwarden-deb/tree/dh-cargo/)). Weirdly the compile process happens in `dh_auto_test` instead of `dh_auto_build`
@@ -47,7 +71,9 @@ override_dh_auto_install:
 	dh_auto_install -- --no-source
 
 override_dh_installman:
-	mkdir -p debian/tmp/man/vaultwarden
-	help2man debian/tmp/usr/bin/vaultwarden -n "Vaultwarden server and utilities" --no-info --no-discard-stderr > debian/tmp/man/vaultwarden/vaultwarden.1
-	ls -1 -d debian/tmp/man/vaultwarden/* > "debian/vaultwarden.manpages"
+ifeq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
+	mkdir -p debian/tmp/man/vaultwarden-doc
+	help2man debian/tmp/usr/bin/vaultwarden -n "Vaultwarden server and utilities" --no-info --no-discard-stderr > debian/tmp/man/vaultwarden-doc/vaultwarden.1
+	ls -1 -d debian/tmp/man/vaultwarden-doc/* > "debian/vaultwarden-doc.manpages"
+endif
 	dh_installman
