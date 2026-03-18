@@ -3,7 +3,7 @@ Section: misc
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
                help2man <!cross>,
-               libmariadb-dev-compat,
+               libmariadb-dev-compat | libmysqlclient-dev,
                libpq-dev,
                libsqlite3-dev,
                libssl-dev,
