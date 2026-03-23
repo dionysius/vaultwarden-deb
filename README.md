@@ -35,7 +35,12 @@ This debian source package builds [Vaultwarden](https://github.com/dani-garcia/v
 
 ### Requirements
 
-Installed `git-buildpackage` from your apt
+Installed `git-buildpackage` from your apt and clone with it and switch to the folder:
+
+```bash
+gbp clone https://github.com/dionysius/vaultwarden-deb.git
+cd vaultwarden-deb
+```
 
 Installed build dependencies as defined in [debian/control `Build-Depends`](debian/control) (will notify you in the build process otherwise). [`mk-build-deps`](https://manpages.debian.org/testing/devscripts/mk-build-deps.1.en.html) can help you automate the installation, for example:
 
@@ -43,16 +48,9 @@ Installed build dependencies as defined in [debian/control `Build-Depends`](debi
 mk-build-deps -i -r debian/control -t "apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes"
 ```
 
-If `rust`/`cargo` is not recent enough don't forget to look into your `*-updates`/`*-backports` apt sources for newer versions or use [`rustup`](https://rustup.rs).
+If your distro doesn't package `rustup`, check `*-updates`/`*-backports` or install it using the [`rustup installer`](https://rustup.rs).
 
 ### Build package
-
-Clone with git-buildpackage and switch to the folder:
-
-```bash
-gbp clone https://github.com/dionysius/vaultwarden-deb.git
-cd vaultwarden-deb
-```
 
 Build with git-buildpackage - there are many arguments to fine-tune the build (see `gbp buildpackage --help` and `dpkg-buildpackage --help`), notable options: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there), for example:
 
