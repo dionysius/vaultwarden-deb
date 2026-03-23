@@ -1,3 +1,10 @@
+vaultwarden (1.35.4-3) unstable; urgency=medium
+
+  * offer vaultwarden to be built with a mysql connector (related #24)
+  * switch to tarball-based upstream import workflow
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 23 Mar 2026 16:46:58 +0100
+
 vaultwarden (1.35.4-2) unstable; urgency=medium
 
   * support cross building, offer riscv64 builds
