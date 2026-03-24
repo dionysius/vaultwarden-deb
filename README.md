@@ -35,7 +35,7 @@ This debian source package builds [Vaultwarden](https://github.com/dani-garcia/v
 
 ### Requirements
 
-Installed `git-buildpackage` from your apt and clone with it and switch to the folder:
+Installed `git-buildpackage` from your apt, clone with it and switch to the folder:
 
 ```bash
 gbp clone https://github.com/dionysius/vaultwarden-deb.git
@@ -52,7 +52,7 @@ If your distro doesn't package `rustup`, check `*-updates`/`*-backports` or inst
 
 ### Build package
 
-Build with git-buildpackage - there are many arguments to fine-tune the build (see `gbp buildpackage --help` and `dpkg-buildpackage --help`), notable options: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there), for example:
+There are many arguments to fine-tune the build (see `gbp buildpackage --help` and `dpkg-buildpackage --help`), notable options: `-b` (binary-only, no source files), `-us` (unsigned source package), `-uc` (unsigned .buildinfo and .changes file), `--git-export-dir=<somedir>` (before building the package export the source there), for example:
 
 ```bash
 gbp buildpackage -b -us -uc
