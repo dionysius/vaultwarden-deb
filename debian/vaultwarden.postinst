@@ -2,7 +2,7 @@
 set -e
 
 if [ "$1" = "configure" ]; then
-  sudo adduser --system --group --quiet --no-create-home --home /var/lib/vaultwarden vaultwarden >/dev/null || true
+  adduser --system --group --quiet --no-create-home --home /var/lib/vaultwarden vaultwarden >/dev/null || true
   chown vaultwarden:vaultwarden /var/lib/vaultwarden /var/lib/vaultwarden/data
 fi
 
