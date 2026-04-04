@@ -1,3 +1,10 @@
+vaultwarden (1.35.4-4) unstable; urgency=medium
+
+  * use upstream-vcs-tag import so upstream git history doesn't get lost
+  * maintenance scripts are elevated already (fixes: #25)
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sat, 04 Apr 2026 21:38:14 +0200
+
 vaultwarden (1.35.4-3) unstable; urgency=medium
 
   * offer vaultwarden to be built with a mysql connector (related #24)
