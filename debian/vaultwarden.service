@@ -1,48 +1,81 @@
+# Please consider only editing this file through systemd drop-in files
+# (e.g. `systemd edit vaultwarden`). This will enable you to get updates
+# to this file automatically, without your overrides being lost.
+
 [Unit]
 Description=Vaultwarden API server
-Documentation=https://github.com/dani-garcia/vaultwarden
-# If you use a database like mariadb,mysql or postgresql, 
-# you have to add them like the following and uncomment them 
-# by removing the `# ` before it. This makes sure that your 
-# database server is started before vaultwarden ("After") and has 
-# started successfully before starting vaultwarden ("Requires").
-
-# Only sqlite
+Documentation=https://github.com/dani-garcia/vaultwarden/wiki
+# The service requires network interfaces to be configured.
 After=network.target
+# If you want to expose the server to the network directly, you may find the following useful:
+#After=network-online.target
 
-# MariaDB
-# After=network.target mariadb.service
-# Requires=mariadb.service
+# The default database backend, SQLite, does not require any external services.
+# However, other backends (MariaDB, MySQL, PostgreSQL) should specify dependencies, such that
+# Vaultwarden is only started after (`After=`) the DB has successfully (`Requires=`) started.
+# Example for MariaDB:
+#After=mariadb.service
+#Requires=mariadb.service
 
-# Mysql
-# After=network.target mysqld.service
-# Requires=mysqld.service
-
-# PostgreSQL
-# After=network.target postgresql.service
-# Requires=postgresql.service
+# If running Vaultwarden behind a reverse proxy, consider ordering it before also:
+#Before=nginx.service
 
 [Service]
-# The user/group vaultwarden is run under. the working directory (see below) should allow write and read access to this user/group
-User=vaultwarden
-Group=vaultwarden
-# The location of the env file for configuration
-EnvironmentFile=/etc/default/vaultwarden
-# The location of the compiled binary
+Type=exec
 ExecStart=/usr/bin/vaultwarden
-# Set reasonable connection and process limits
+# Passing config via env vars (`EnvironmentFile=`) makes them visible to every process via D-Bus
+# queries (`systemctl show vaultwarden.service`).
+# For this reason, it is also advisable to override that file by editing it, rather than using
+# `Environment=` directives.
+Environment=ENV_FILE=%E/vaultwarden/vaultwarden.ini
+ConfigurationDirectory=vaultwarden
+ConfigurationDirectoryMode=0750
+# Where persistent data gets stored.
+StateDirectory=vaultwarden
+StateDirectoryMode=0700
+# Where the icon cache gets stored.
+CacheDirectory=vaultwarden
+CacheDirectoryMode=0700
+# Where temporary files get stored.
+RuntimeDirectory=vaultwarden
+RuntimeDirectoryMode=0700
+# TODO: RuntimeDirectoryPreserve=restart ? Would that be useful?
+
+# Set reasonable connection and process limits.
 LimitNOFILE=1048576
 LimitNPROC=64
-# Isolate vaultwarden from the rest of the system
-PrivateTmp=true
-PrivateDevices=true
+
+## Isolate vaultwarden from the rest of the system.
+DynamicUser=true
+# Required for config file access.
+SupplementaryGroups=vaultwarden-cfg
+ProtectProc=noaccess
+ProcSubset=pid
 ProtectHome=true
-ProtectSystem=strict
-# Only allow writes to the following directory and set it to the working directory (user and password data are stored here)
-WorkingDirectory=/var/lib/vaultwarden
-ReadWritePaths=/var/lib/vaultwarden
-# Allow vaultwarden to bind ports in the range of 0-1024
-AmbientCapabilities=CAP_NET_BIND_SERVICE
+SetLoginEnvironment=false
+SecureBits=noroot noroot-locked
+UMask=0077
+PrivateIPC=true
+ProtectClock=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=strict
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictFileSystems=@basic-api @common-block
+PrivateBPF=true
+MemoryDenyWriteExecute=true
+RestrictRealtime=true
+RemoveIPC=true
+SystemCallFilter=@system-service
+SystemCallArchitectures=native
+AmbientCapabilities=
+CapabilityBoundingSet=
+# Uncomment these to allow vaultwarden to bind to ports in the range 0-1024.
+# (This should be unnecessary if serving over localhost.)
+#AmbientCapabilities=CAP_NET_BIND_SERVICE
+#CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
 [Install]
 WantedBy=multi-user.target

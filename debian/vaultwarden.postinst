@@ -1,9 +1,9 @@
 #!/bin/sh
 set -e
 
-if [ "$1" = "configure" ]; then
-  adduser --system --group --quiet --no-create-home --home /var/lib/vaultwarden vaultwarden >/dev/null || true
-  chown vaultwarden:vaultwarden /var/lib/vaultwarden /var/lib/vaultwarden/data
-fi
-
 #DEBHELPER#
+
+if [ "$1" = configure ]; then
+  chgrp vaultwarden-cfg /etc/vaultwarden
+  chmod 750 /etc/vaultwarden
+fi
