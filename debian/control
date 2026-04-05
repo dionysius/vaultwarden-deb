@@ -24,7 +24,9 @@ Depends: adduser,
          ${misc:Depends},
          ${shlibs:Depends},
 Recommends: vaultwarden-doc (= ${source:Version}),
+            sqlite3,
 Suggests: sqlite3 | postgresql | default-mysql-server | virtual-mysql-server,
+          nginx | caddy,
 Description: Unofficial Bitwarden compatible server written in Rust
  Alternative implementation of the Bitwarden server API written in Rust and
  compatible with upstream Bitwarden clients*, perfect for self-hosted
