@@ -1,5 +1,5 @@
 Source: vaultwarden
-Section: misc
+Section: web
 Priority: optional
 Build-Depends: debhelper-compat (= 13),
                help2man <!cross>,
