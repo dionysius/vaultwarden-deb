@@ -1,3 +1,9 @@
+vaultwarden (1.35.4-5) UNRELEASED; urgency=medium
+
+  * move real configuration file to /etc/vaultwarden/vaultwarden.env, set permissions on config and data directories
+
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 09 Apr 2026 04:45:06 +0200
+
 vaultwarden (1.35.4-4) unstable; urgency=medium
 
   * use upstream-vcs-tag import so upstream git history doesn't get lost

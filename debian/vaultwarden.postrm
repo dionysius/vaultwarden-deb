@@ -1,0 +1,28 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "purge" ]; then
+  for path in /var/lib/vaultwarden /var/lib/vaultwarden/data /etc/vaultwarden; do
+    if dpkg-statoverride --list "$path" >/dev/null 2>&1; then
+      dpkg-statoverride --remove "$path"
+    fi
+  done
+fi
+
+# # Finalize downgrade to < 1.35.4-5~
+# if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+#   if [ -f /etc/vaultwarden/vaultwarden.env.dpkg-bak ]; then
+#     mv -f /etc/vaultwarden/vaultwarden.env.dpkg-bak /etc/default/vaultwarden
+#     echo "vaultwarden: Preserving user changes from /etc/vaultwarden/vaultwarden.env to /etc/default/vaultwarden" >&2
+#   fi
+# fi
+
+# # Abort downgrade to < 1.35.4-5~
+# if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+#   if [ -f /etc/vaultwarden/vaultwarden.env.dpkg-bak ]; then
+#     mv -f /etc/vaultwarden/vaultwarden.env.dpkg-bak /etc/vaultwarden/vaultwarden.env
+#     echo "vaultwarden: Reinstalling /etc/vaultwarden/vaultwarden.env that was moved away" >&2
+#   fi
+# fi
+
+#DEBHELPER#

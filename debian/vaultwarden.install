@@ -1,1 +1,2 @@
 usr/bin/vaultwarden
+vaultwarden.env etc/vaultwarden

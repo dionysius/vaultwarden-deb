@@ -1,0 +1,6 @@
+# Default settings for vaultwarden. This file is sourced by the vaultwarden systemd service.
+# The vaultwarden configuration file has moved to /etc/vaultwarden/vaultwarden.env.
+# Some crates allow customization via environment variables.
+
+# Tokio by default spawns one thread for each CPU core (https://docs.rs/tokio/latest/tokio/#cpu-bound-tasks-and-blocking-code)
+#TOKIO_WORKER_THREADS=

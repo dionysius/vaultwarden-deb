@@ -3,7 +3,35 @@ set -e
 
 if [ "$1" = "configure" ]; then
   adduser --system --group --quiet --no-create-home --home /var/lib/vaultwarden vaultwarden >/dev/null || true
-  chown vaultwarden:vaultwarden /var/lib/vaultwarden /var/lib/vaultwarden/data
+
+  # TODO: consider using systemd *Directory* options
+  # TODO2: If switched to systemd options, update NEWS
+  for i in /etc/vaultwarden; do
+   if ! dpkg-statoverride --list $i >/dev/null 2>&1; then
+     dpkg-statoverride --update --add root vaultwarden 750 $i
+   fi
+  done
+  for i in /var/lib/vaultwarden /var/lib/vaultwarden/data; do
+    if ! dpkg-statoverride --list $i >/dev/null 2>&1; then
+      dpkg-statoverride --update --add vaultwarden vaultwarden 750 $i
+    fi
+  done
 fi
+
+# # Finalize upgrade from < 1.35.4-5~ (delayed variant)
+# if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+#   if [ -f /etc/default/vaultwarden.dpkg-bak ]; then
+#     mv -f /etc/default/vaultwarden.dpkg-bak /etc/vaultwarden/vaultwarden.env
+#     echo "vaultwarden: Preserving user changes from /etc/default/vaultwarden to /etc/vaultwarden/vaultwarden.env" >&2
+#   fi
+# fi
+
+# # Abort upgrade from < 1.35.4-5~ (delayed variant)
+# if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+#   if [ -f /etc/default/vaultwarden.dpkg-bak ]; then
+#     mv -f /etc/default/vaultwarden.dpkg-bak /etc/default/vaultwarden
+#     echo "vaultwarden: Reinstalling /etc/default/vaultwarden that was moved away" >&2
+#   fi
+# fi
 
 #DEBHELPER#

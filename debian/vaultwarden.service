@@ -26,8 +26,10 @@ After=network.target
 # The user/group vaultwarden is run under. the working directory (see below) should allow write and read access to this user/group
 User=vaultwarden
 Group=vaultwarden
+# Load environment variables from the default file
+EnvironmentFile=-%E/default/vaultwarden
 # The location of the env file for configuration
-EnvironmentFile=/etc/default/vaultwarden
+Environment=ENV_FILE=%E/vaultwarden/vaultwarden.env
 # The location of the compiled binary
 ExecStart=/usr/bin/vaultwarden
 # Set reasonable connection and process limits

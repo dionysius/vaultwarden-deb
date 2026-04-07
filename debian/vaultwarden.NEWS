@@ -1,0 +1,12 @@
+vaultwarden (1.35.4-5) unstable; urgency=medium
+
+  * The configuration file has moved from /etc/default/vaultwarden to
+    /etc/vaultwarden/vaultwarden.env. Any local modifications are automatically
+    preserved by the package upgrade.
+  * Permissions on /etc/vaultwarden, /var/lib/vaultwarden and
+    /var/lib/vaultwarden/data have been tightened to 750 with vaultwarden
+    user/group. If you have customised these permissions, register your
+    changes with dpkg-statoverride(8) to ensure they survive future
+    upgrades.
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 08 Apr 2026 20:27:56 +0200

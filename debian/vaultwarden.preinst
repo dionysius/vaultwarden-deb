@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+# Upgrade from < 1.35.4-5~: move configuration forth (direct)
+if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+  if [ -f /etc/default/vaultwarden ]; then
+    mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env
+  fi
+fi
+
+# # Upgrade from < 1.35.4-5~: move configuration forth (delayed)
+# # Manually needed since dpkg-maintscript-helper would wrongfully compare the new
+# # defaults with the whole configuration file since the move happens after unpack.
+# if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+#   if [ -f /etc/default/vaultwarden ]; then
+#     mv -f /etc/default/vaultwarden /etc/default/vaultwarden.dpkg-bak
+#   fi
+# fi
+
+#DEBHELPER#
