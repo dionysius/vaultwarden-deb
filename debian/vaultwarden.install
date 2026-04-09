@@ -1,2 +1,4 @@
+debian/vaultwarden.service.default usr/share/vaultwarden
+debian/vaultwarden.ucf-migration-seed usr/share/vaultwarden
 usr/bin/vaultwarden
-vaultwarden.env etc/vaultwarden
+vaultwarden.env usr/share/vaultwarden

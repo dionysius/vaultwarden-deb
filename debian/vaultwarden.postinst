@@ -18,20 +18,27 @@ if [ "$1" = "configure" ]; then
   done
 fi
 
-# # Finalize upgrade from < 1.35.4-5~ (delayed variant)
-# if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
-#   if [ -f /etc/default/vaultwarden.dpkg-bak ]; then
-#     mv -f /etc/default/vaultwarden.dpkg-bak /etc/vaultwarden/vaultwarden.env
-#     echo "vaultwarden: Preserving user changes from /etc/default/vaultwarden to /etc/vaultwarden/vaultwarden.env" >&2
-#   fi
-# fi
+# Finalize upgrade from < 1.35.4-5~: restore saved config before UCF runs
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+  if [ -f /etc/vaultwarden/vaultwarden.env.dpkg-migration ]; then
+    # Seed ucf with previous original config, otherwise it won't provide an initial 3-way diff/merge
+    ucf --three-way /usr/share/vaultwarden/vaultwarden.ucf-migration-seed /etc/vaultwarden/vaultwarden.env
+    # Restore user's actual file
+    mv -f /etc/vaultwarden/vaultwarden.env.dpkg-migration /etc/vaultwarden/vaultwarden.env
+  fi
+fi
 
-# # Abort upgrade from < 1.35.4-5~ (delayed variant)
-# if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
-#   if [ -f /etc/default/vaultwarden.dpkg-bak ]; then
-#     mv -f /etc/default/vaultwarden.dpkg-bak /etc/default/vaultwarden
-#     echo "vaultwarden: Reinstalling /etc/default/vaultwarden that was moved away" >&2
-#   fi
-# fi
+# Always provide --three-way for ucf comparison (unable to configure, rest of dh_ucf still valid)
+if [ "$1" = "configure" ]; then
+  ucf --three-way /usr/share/vaultwarden/vaultwarden.service.default /etc/default/vaultwarden
+  ucf --three-way /usr/share/vaultwarden/vaultwarden.env /etc/vaultwarden/vaultwarden.env
+fi
+
+# Abort downgrade to < 1.35.4-5~: restore previously moved config before UCF runs
+if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+  if [ -f /etc/default/vaultwarden ]; then
+    mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env
+  fi
+fi
 
 #DEBHELPER#

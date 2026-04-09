@@ -1,0 +1,2 @@
+/usr/share/vaultwarden/vaultwarden.service.default /etc/default/vaultwarden
+/usr/share/vaultwarden/vaultwarden.env /etc/vaultwarden/vaultwarden.env

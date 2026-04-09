@@ -1,20 +1,16 @@
 #!/bin/sh
 set -e
 
-# Downgrade to < 1.35.4-5~: move configuration back (direct)
+# Downgrade to < 1.35.4-5~: move configuration back and hand ownership to conffiles
 if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+  ucf --purge /etc/default/vaultwarden
+  ucfr --purge vaultwarden /etc/default/vaultwarden
+  ucf --purge /etc/vaultwarden/vaultwarden.env
+  ucfr --purge vaultwarden /etc/vaultwarden/vaultwarden.env
+
   if [ -f /etc/vaultwarden/vaultwarden.env ]; then
     mv -f /etc/vaultwarden/vaultwarden.env /etc/default/vaultwarden
   fi
 fi
-
-# # Downgrade to < 1.35.4-5~: move configuration back (delayed)
-# # Manually needed since unpack would overwrite /etc/vaultwarden/vaultwarden.env
-# # with the old symlink.
-# if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
-#   if [ -f /etc/vaultwarden/vaultwarden.env ]; then
-#     mv -f /etc/vaultwarden/vaultwarden.env /etc/vaultwarden/vaultwarden.env.dpkg-bak
-#   fi
-# fi
 
 #DEBHELPER#
