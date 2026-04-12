@@ -1,3 +1,15 @@
+vaultwarden (1.35.5-1) unstable; urgency=medium
+
+  * update to [1.35.5](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.5). Important - contains security fixes!
+
+  [ ISSOtm ]
+  * Move to a more specific section
+
+  [ dionysius ]
+  * remove db backend suggests: not this package's concern (closes #26)
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sun, 12 Apr 2026 20:44:43 +0200
+
 vaultwarden (1.35.4-4) unstable; urgency=medium
 
   * use upstream-vcs-tag import so upstream git history doesn't get lost
