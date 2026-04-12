@@ -1,5 +1,5 @@
 diff --git a/.env.template b/.env.template
-index 03990820..11ef17ee 100644
+index 03990820..5fce5c9a 100644
 --- a/.env.template
 +++ b/.env.template
 @@ -5,10 +5,8 @@
@@ -10,11 +10,27 @@ index 03990820..11ef17ee 100644
 -## in the current working directory. If this is not the case, the environment
 -## variable ENV_FILE can be set to the location of this file prior to starting
 -## Vaultwarden.
-+## This file is referenced via the ENV_FILE variable in the vaultwarden systemd service
++## This file is referenced via the ENV_FILE variable in the vaultwarden systemd service,
 +## which instructs vaultwarden to load it as a configuration file.
  
  ####################
  ### Data folders ###
+@@ -27,13 +25,13 @@
+ 
+ ## Individual folders, these override %DATA_FOLDER%
+ # RSA_KEY_FILENAME=data/rsa_key
+-# ICON_CACHE_FOLDER=data/icon_cache
++ICON_CACHE_FOLDER=/var/cache/vaultwarden/icons
+ # ATTACHMENTS_FOLDER=data/attachments
+ # SENDS_FOLDER=data/sends
+ 
+ ## Temporary folder used for storing temporary file uploads
+ ## Must be a local path.
+-# TMP_FOLDER=data/tmp
++TMP_FOLDER=/tmp
+ 
+ ## HTML template overrides data folder
+ ## Must be a local path.
 @@ -42,7 +40,7 @@
  # RELOAD_TEMPLATES=false
  

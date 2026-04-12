@@ -1,3 +1,2 @@
-/etc/vaultwarden
-/var/lib/vaultwarden
-/var/lib/vaultwarden/data
+# needs to exist, ucf doesn't create directories, systemd service is too late
+etc/vaultwarden

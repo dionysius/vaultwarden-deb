@@ -1,10 +1,10 @@
 #!/bin/sh
 set -e
 
-# Prepare upgrade from < 1.35.4-5~: move config to an untracked path before unpack
+# Upgrade from < 1.35.4-5~: move config file forth early
 if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
   if [ -f /etc/default/vaultwarden ]; then
-    mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env.dpkg-migration
+    mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env
   fi
 fi
 

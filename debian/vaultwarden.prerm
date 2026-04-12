@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Downgrade to < 1.35.4-5~: move configuration back and hand ownership to conffiles
+# Downgrade to < 1.35.4-5~: move config file back and hand ownership to conffiles early
 if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
   ucf --purge /etc/default/vaultwarden
   ucfr --purge vaultwarden /etc/default/vaultwarden

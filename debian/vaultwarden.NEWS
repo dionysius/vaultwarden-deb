@@ -1,12 +1,19 @@
 vaultwarden (1.35.4-5) unstable; urgency=medium
 
-  * The configuration file has moved from /etc/default/vaultwarden to
-    /etc/vaultwarden/vaultwarden.env. Any local modifications are automatically
-    preserved by the package upgrade.
-  * Permissions on /etc/vaultwarden, /var/lib/vaultwarden and
-    /var/lib/vaultwarden/data have been tightened to 750 with vaultwarden
-    user/group. If you have customised these permissions, register your
-    changes with dpkg-statoverride(8) to ensure they survive future
-    upgrades.
+  * The main configuration file has moved from `/etc/default/vaultwarden` to
+    `/etc/vaultwarden/vaultwarden.env`. Any local modifications are
+    automatically preserved by the package upgrade. It is advised to diff and
+    obtain maintainer changes for better directory organisation, but they are
+    not critical.
+  * Permissions on `/etc/vaultwarden`, `/var/lib/vaultwarden` and
+    `/var/lib/vaultwarden/data` have been tightened and are now managed by the
+    systemd unit. It is advised to review and obtain maintainer changes if you
+    have customized the systemd service file (use `systemctl edit ...`).
+  * The system user and group named `vaultwarden` are not needed anymore and
+    can be removed. Systemd will once recursively update the ownership of files
+    to the new dynamic user.
+  * Any custom mounts may need to be updated to the new uid and gid.
+  * All changes should be reversible by downgrading to your latest package.
+    Let us know what went wrong so we can fix the issue.
 
- -- dionysius <dragon.dionysius@gmail.com>  Wed, 08 Apr 2026 20:27:56 +0200
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 12 Apr 2026 19:42:43 +0200
