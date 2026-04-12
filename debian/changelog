@@ -1,6 +1,7 @@
-vaultwarden (1.35.5-1) unstable; urgency=medium
+vaultwarden (1.35.6-1) unstable; urgency=medium
 
   * update to [1.35.5](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.5). Important - contains security fixes!
+  * update to [1.35.6](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.6)
 
   [ ISSOtm ]
   * Move to a more specific section
