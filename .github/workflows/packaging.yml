@@ -21,6 +21,7 @@ jobs:
       # https://github.com/orgs/community/discussions/26671
       DEBFULLNAME: dionysius (github-actions)
       DEBEMAIL: dragon.dionysius+gha@gmail.com
+      DEB_BUILD_OPTIONS: parallel=8
       images: '["ubuntu:latest", "debian:stable", "debian:oldstable"]'
       architectures: '["amd64", "arm64", "riscv64"]'
       before_build_deps_install: |
