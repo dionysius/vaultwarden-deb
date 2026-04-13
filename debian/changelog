@@ -1,8 +1,8 @@
-vaultwarden (1.35.6-3) unstable; urgency=medium
+vaultwarden (1.35.6-4) unstable; urgency=medium
 
-  * arm64 builds are failing, try with reduced parallel
   * update to [1.35.5](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.5). Important - contains security fixes!
   * update to [1.35.6](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.6)
+  * force cross-compilation for arm64 via amd64, arm64 native builds are getting killed by/in the runners
 
   [ ISSOtm ]
   * Move to a more specific section
