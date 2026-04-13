@@ -1,9 +1,23 @@
-vaultwarden (1.35.4-5) UNRELEASED; urgency=medium
+vaultwarden (1.35.6-5) UNRELEASED; urgency=medium
 
   * move real configuration file to /etc/vaultwarden/vaultwarden.env, set permissions on config and data directories
   * use ucf for config file comparison
 
- -- dionysius <dragon.dionysius@gmail.com>  Thu, 09 Apr 2026 04:45:06 +0200
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 13 Apr 2026 16:25:54 +0200
+
+vaultwarden (1.35.6-4) unstable; urgency=medium
+
+  * update to [1.35.5](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.5). Important - contains security fixes!
+  * update to [1.35.6](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.6)
+  * force cross-compilation for arm64 via amd64, arm64 native builds are getting killed by/in the runners
+
+  [ ISSOtm ]
+  * Move to a more specific section
+
+  [ dionysius ]
+  * remove db backend suggests: not this package's concern (closes #26)
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sun, 12 Apr 2026 20:44:43 +0200
 
 vaultwarden (1.35.4-4) unstable; urgency=medium
 

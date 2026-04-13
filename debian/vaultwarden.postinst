@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Abort downgrade to < 1.35.4-5~: restore config file
-if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.4-5~"; then
+# Abort downgrade to < 1.35.6-5~: restore config file
+if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.6-5~"; then
   if [ -f /etc/default/vaultwarden ]; then
     mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env
   fi

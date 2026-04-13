@@ -1,4 +1,4 @@
-vaultwarden (1.35.4-5) unstable; urgency=medium
+vaultwarden (1.35.6-5) unstable; urgency=medium
 
   * The main configuration file has moved from `/etc/default/vaultwarden` to
     `/etc/vaultwarden/vaultwarden.env`. Any local modifications are
