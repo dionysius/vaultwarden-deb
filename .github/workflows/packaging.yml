@@ -21,9 +21,9 @@ jobs:
       # https://github.com/orgs/community/discussions/26671
       DEBFULLNAME: dionysius (github-actions)
       DEBEMAIL: dragon.dionysius+gha@gmail.com
-      DEB_BUILD_OPTIONS: parallel=2
       images: '["ubuntu:latest", "debian:stable", "debian:oldstable"]'
       architectures: '["amd64", "arm64", "riscv64"]'
+      natives: '["amd64"]'
       before_build_deps_install: |
         # install rustup manually if not available as distribution package (fallback)
         # mk-build-deps would install rustup if available
