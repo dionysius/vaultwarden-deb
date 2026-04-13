@@ -27,7 +27,7 @@ index 03990820..5fce5c9a 100644
  ## Temporary folder used for storing temporary file uploads
  ## Must be a local path.
 -# TMP_FOLDER=data/tmp
-+TMP_FOLDER=/tmp
++TMP_FOLDER=/var/tmp
  
  ## HTML template overrides data folder
  ## Must be a local path.

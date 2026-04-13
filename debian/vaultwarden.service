@@ -41,14 +41,12 @@ LimitNPROC=64
 ## Isolate vaultwarden from the rest of the system.
 DynamicUser=true
 
-# Required for config file access.
-SupplementaryGroups=vaultwarden-cfg
 ProtectProc=noaccess
 ProcSubset=pid
 ProtectHome=true
 SetLoginEnvironment=false
 SecureBits=noroot noroot-locked
-UMask=0077
+UMask=0027
 PrivateIPC=true
 ProtectClock=true
 PrivateDevices=true
