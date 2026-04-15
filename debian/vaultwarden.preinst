@@ -1,8 +1,8 @@
 #!/bin/sh
 set -e
 
-# Upgrade from < 1.35.6-5~: move config file forth early
-if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.6-5~"; then
+# Upgrade from < 1.35.7-2~: move config file forth early
+if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
   if [ -f /etc/default/vaultwarden ]; then
     mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env
   fi

@@ -1,15 +1,15 @@
 #!/bin/sh
 set -e
 
-# Abort upgrade from < 1.35.6-5~: restore config file
-if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.6-5~"; then
+# Abort upgrade from < 1.35.7-2~: restore config file
+if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
   if [ -f /etc/vaultwarden/vaultwarden.env ]; then
     mv -f /etc/vaultwarden/vaultwarden.env /etc/default/vaultwarden
   fi
 fi
 
-# Downgrade to < 1.35.6-5~: restore ownership of files
-if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.6-5~"; then
+# Downgrade to < 1.35.7-2~: restore ownership of files
+if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
   if ! getent passwd vaultwarden >/dev/null || ! getent group vaultwarden >/dev/null; then
     echo "User or group vaultwarden does not exist anymore, manual ownership restoration required" >&2
   fi
