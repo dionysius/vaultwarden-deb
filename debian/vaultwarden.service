@@ -36,6 +36,8 @@ CacheDirectoryMode=0750
 
 # Set reasonable connection and process limits.
 LimitNOFILE=1048576
+# Systems with many cores may want to raise this limit:
+# https://github.com/dionysius/vaultwarden-deb/issues/21
 LimitNPROC=64
 
 ## Isolate vaultwarden from the rest of the system.
