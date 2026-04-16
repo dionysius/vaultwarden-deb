@@ -2,6 +2,7 @@
 # (e.g. `systemd edit vaultwarden`). This will enable you to get updates
 # to this file automatically, without your overrides being lost.
 
+# Refer to the manpage `systemd.unit` for detailed documentation on each option.
 [Unit]
 Description=Vaultwarden API server
 Documentation=https://github.com/dani-garcia/vaultwarden/wiki
@@ -20,58 +21,89 @@ After=network.target
 # If running Vaultwarden behind a reverse proxy - running on this system - consider ordering it before also:
 #Before=nginx.service
 
+# Refer to the manpages `systemd.service` and `systemd.exec` for detailed documentation on each option.
 [Service]
-User=vaultwarden
-Group=vaultwarden
+## Service execution environment
+# Service configuration file.
 EnvironmentFile=-%E/default/vaultwarden
+# Vaultwarden configuration file.
 Environment=ENV_FILE=%E/vaultwarden/vaultwarden.env
+# Service execution.
 Type=exec
 ExecStart=/usr/bin/vaultwarden
+
+## Permissions and directories
+# Use dynamic user and group. Even when DynamicUser is true, systemd will use the system user and group if they exist.
+DynamicUser=true
+User=vaultwarden
+Group=vaultwarden
+# Configuration directory (read-only for the service).
 ConfigurationDirectory=vaultwarden
 ConfigurationDirectoryMode=0500
+# Writable directories (read-write for the service, read-only for the group).
 StateDirectory=vaultwarden
 StateDirectoryMode=0750
 CacheDirectory=vaultwarden
 CacheDirectoryMode=0750
+# File creation mask (matching modes above).
+UMask=0027
 
-# Set reasonable connection and process limits.
+## Connection and process limits
 LimitNOFILE=1048576
 # Systems with many cores may want to raise this limit:
 # https://github.com/dionysius/vaultwarden-deb/issues/21
 LimitNPROC=64
+#LimitLOCKS=64
+MemoryHigh=2G
+MemoryMax=2.5G
+CPUQuota=200%
+#TasksMax=512
 
-## Isolate vaultwarden from the rest of the system.
-DynamicUser=true
+## Capabilities
+AmbientCapabilities=
+CapabilityBoundingSet=
+# Uncomment these to allow vaultwarden to bind to ports in the range 0-1024.
+#AmbientCapabilities=CAP_NET_BIND_SERVICE
+#CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
+## Sandboxing and isolation
+# Process restrictions
+NoNewPrivileges=true
+RestrictSUIDSGID=true
+SecureBits=noroot noroot-locked
+
+# Filesystem protection
+ProtectSystem=strict
+ProtectHome=true
 ProtectProc=noaccess
 ProcSubset=pid
-ProtectHome=true
-SetLoginEnvironment=false
-SecureBits=noroot noroot-locked
-UMask=0027
-PrivateIPC=true
-ProtectClock=true
+
+# Namespace isolation
+PrivateTmp=disconnected
 PrivateDevices=true
+PrivateIPC=true
+PrivateBPF=true
+
+# Kernel and system protection
+ProtectClock=true
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectKernelLogs=true
 ProtectControlGroups=strict
-RestrictAddressFamilies=AF_INET AF_INET6
-RestrictFileSystems=@basic-api @common-block
-PrivateBPF=true
+
+# Execution restrictions
 MemoryDenyWriteExecute=true
-RestrictRealtime=true
-RemoveIPC=true
+SetLoginEnvironment=false
+
+# System call and network filtering
 SystemCallFilter=@system-service
 SystemCallArchitectures=native
-AmbientCapabilities=
-CapabilityBoundingSet=
-# Uncomment these to allow vaultwarden to bind to ports in the range 0-1024.
-# (This should be unnecessary if serving over localhost.)
-#AmbientCapabilities=CAP_NET_BIND_SERVICE
-#CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictFileSystems=@basic-api @common-block
+RestrictRealtime=true
 
-PrivateTmp=true
+# Cleanup
+RemoveIPC=true
 
 [Install]
 WantedBy=multi-user.target
