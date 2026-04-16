@@ -1,5 +1,10 @@
 vaultwarden (1.35.7-2) unstable; urgency=medium
 
+  Restructured the service after discovering that configured vaultwarden
+  environment variables were accessible through the systemd D-Bus interface.
+  Any unprivileged local system user could query the D-Bus interface to read
+  sensitive configuration values.
+  .
   * The main configuration file has moved from `/etc/default/vaultwarden` to
     `/etc/vaultwarden/vaultwarden.env`. Any local modifications are
     automatically preserved by the package upgrade. It is advised to diff and
@@ -18,5 +23,10 @@ vaultwarden (1.35.7-2) unstable; urgency=medium
     to the new uid and gid.
   * All changes should be reversible by downgrading to your latest package.
     Let us know what went wrong so we can fix the issue.
+  .
+  If you are still using the packagecloud apt repository, consider migrating
+  to the new repository at https://apt.crunchy.run/vaultwarden within this year
+  (see github issue #20).
+  Debian systems can also use `extrepo` to enable the `vaultwarden` repository.
 
- -- dionysius <dragon.dionysius@gmail.com>  Wed, 12 Apr 2026 19:42:43 +0200
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 16 Apr 2026 02:56:02 +0200
