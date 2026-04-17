@@ -1,2 +1,2 @@
-# needs to exist, ucf doesn't create directories, systemd service is too late
+# needs to exist for manually invoking ucf with --three-way, ucf doesn't create directories, systemd-tmpfiles is too late
 etc/vaultwarden
