@@ -36,7 +36,10 @@ WorkingDirectory=/var/lib/vaultwarden
 ## Permissions and directories
 User=vaultwarden
 Group=vaultwarden
-# Writable directories (read-write for the service, read-only for the group).
+# Read-only configuration directory (read-only mount, permissions managed by tmpfiles, warns if mode differs).
+ConfigurationDirectory=vaultwarden::ro
+ConfigurationDirectoryMode=0500
+# Writable directories (read-write for the service, read-only for the group, reapplies permissions recursively if different).
 StateDirectory=vaultwarden
 StateDirectoryMode=0750
 CacheDirectory=vaultwarden
