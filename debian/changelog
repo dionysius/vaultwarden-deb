@@ -1,9 +1,15 @@
-vaultwarden (1.35.7-2) UNRELEASED; urgency=medium
+vaultwarden (1.35.7-2) unstable; urgency=medium
 
+  [ ISSOtm ]
+  * Overhaul systemd service
+  * Integrate config file with ucf
+
+  [ dionysius ]
   * move real configuration file to /etc/vaultwarden/vaultwarden.env, set permissions on config and data directories
-  * use ucf for config file comparison
+  * runtime settings should not define vaultwarden variables
+  * organise sandboxing options
 
- -- dionysius <dragon.dionysius@gmail.com>  Thu, 16 Apr 2026 16:25:54 +0200
+ -- dionysius <dragon.dionysius@gmail.com>  Fri, 17 Apr 2026 10:28:19 +0200
 
 vaultwarden (1.35.7-1) unstable; urgency=medium
 
