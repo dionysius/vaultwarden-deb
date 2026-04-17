@@ -31,15 +31,11 @@ Environment=ENV_FILE=%E/vaultwarden/vaultwarden.env
 # Service execution.
 Type=exec
 ExecStart=/usr/bin/vaultwarden
+WorkingDirectory=/var/lib/vaultwarden
 
 ## Permissions and directories
-# Use dynamic user and group. Even when DynamicUser is true, systemd will use the system user and group if they exist.
-DynamicUser=true
 User=vaultwarden
 Group=vaultwarden
-# Configuration directory (read-only for the service).
-ConfigurationDirectory=vaultwarden
-ConfigurationDirectoryMode=0500
 # Writable directories (read-write for the service, read-only for the group).
 StateDirectory=vaultwarden
 StateDirectoryMode=0750
@@ -54,9 +50,9 @@ LimitNOFILE=1048576
 # https://github.com/dionysius/vaultwarden-deb/issues/21
 LimitNPROC=64
 #LimitLOCKS=64
+CPUQuota=200%
 MemoryHigh=2G
 MemoryMax=2.5G
-CPUQuota=200%
 #TasksMax=512
 
 ## Capabilities

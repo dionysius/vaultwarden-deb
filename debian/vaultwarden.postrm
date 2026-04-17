@@ -8,14 +8,4 @@ if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; th
   fi
 fi
 
-# Downgrade to < 1.35.7-2~: restore ownership of files
-if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
-  if ! getent passwd vaultwarden >/dev/null || ! getent group vaultwarden >/dev/null; then
-    echo "User or group vaultwarden does not exist anymore, manual ownership restoration required" >&2
-  fi
-
-  chown -R vaultwarden:vaultwarden /var/lib/vaultwarden 2>/dev/null || true
-  chown -R root:root /etc/vaultwarden 2>/dev/null || true
-fi
-
 #DEBHELPER#

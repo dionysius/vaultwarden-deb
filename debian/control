@@ -19,8 +19,7 @@ Rules-Requires-Root: no
 
 Package: vaultwarden
 Architecture: any
-Depends: adduser,
-         vaultwarden-web-vault,
+Depends: vaultwarden-web-vault,
          ${misc:Depends},
          ${shlibs:Depends},
 Recommends: vaultwarden-doc (= ${source:Version}),

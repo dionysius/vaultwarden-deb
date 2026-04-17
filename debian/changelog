@@ -3,7 +3,7 @@ vaultwarden (1.35.7-2) UNRELEASED; urgency=medium
   * move real configuration file to /etc/vaultwarden/vaultwarden.env, set permissions on config and data directories
   * use ucf for config file comparison
 
- -- dionysius <dragon.dionysius@gmail.com>  Thu, 13 Apr 2026 16:25:54 +0200
+ -- dionysius <dragon.dionysius@gmail.com>  Thu, 16 Apr 2026 16:25:54 +0200
 
 vaultwarden (1.35.7-1) unstable; urgency=medium
 
