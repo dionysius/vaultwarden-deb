@@ -1,3 +1,9 @@
+vaultwarden (1.35.7-4) unstable; urgency=medium
+
+  * set ConfigurationDirectory for true read-only mount
+
+ -- dionysius <dragon.dionysius@gmail.com>  Fri, 17 Apr 2026 15:35:19 +0200
+
 vaultwarden (1.35.7-3) unstable; urgency=medium
 
   * drop-in systemd files use systemctl, add hint to systemd-analyze
