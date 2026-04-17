@@ -1,9 +1,11 @@
 #!/bin/sh
 set -e
 
-# Abort upgrade from < 1.35.7-2~: restore config file
+# Abort upgrade from < 1.35.7-2~: restore migrated config file back to original location
 if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
-  if [ -f /etc/vaultwarden/vaultwarden.env ]; then
+  if [ -f /etc/vaultwarden/vaultwarden.env.dpkg-migration ]; then
+    mv -f /etc/vaultwarden/vaultwarden.env.dpkg-migration /etc/default/vaultwarden
+  elif [ -f /etc/vaultwarden/vaultwarden.env ]; then
     mv -f /etc/vaultwarden/vaultwarden.env /etc/default/vaultwarden
   fi
 fi

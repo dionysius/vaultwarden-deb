@@ -8,6 +8,13 @@ if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; th
   fi
 fi
 
+# Finalize upgrade from < 1.35.7-2~: restore saved config before UCF runs
+if [ "$1" = "configure" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
+  if [ -f /etc/vaultwarden/vaultwarden.env.dpkg-migration ]; then
+    mv -f /etc/vaultwarden/vaultwarden.env.dpkg-migration /etc/vaultwarden/vaultwarden.env
+  fi
+fi
+
 # Always provide --three-way for ucf comparison (unable to configure, rest of dh_ucf still valid and
 # it should not prompt twice for the same file since the original is cached by ucf)
 if [ "$1" = "configure" ]; then

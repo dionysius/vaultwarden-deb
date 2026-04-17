@@ -1,10 +1,10 @@
 #!/bin/sh
 set -e
 
-# Upgrade from < 1.35.7-2~: move config file forth early
+# Prepare upgrade from < 1.35.7-2~: move config file for migration
 if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; then
   if [ -f /etc/default/vaultwarden ]; then
-    mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env
+    mv -f /etc/default/vaultwarden /etc/vaultwarden/vaultwarden.env.dpkg-migration
   fi
 fi
 
