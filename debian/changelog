@@ -1,3 +1,10 @@
+vaultwarden (1.35.7-3) unstable; urgency=medium
+
+  * drop-in systemd files use systemctl, add hint to systemd-analyze
+  * add missing squence installsysusers
+
+ -- dionysius <dragon.dionysius@gmail.com>  Fri, 17 Apr 2026 13:35:41 +0200
+
 vaultwarden (1.35.7-2) unstable; urgency=medium
 
   [ ISSOtm ]
