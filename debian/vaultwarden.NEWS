@@ -10,17 +10,11 @@ vaultwarden (1.35.7-2) unstable; urgency=medium
     automatically preserved by the package upgrade. It is advised to diff and
     obtain maintainer changes for better directory organisation, but they are
     not critical.
-  * The systemd service file now includes several sandboxing features to
-    isolate the service better. Permissions on `/etc/vaultwarden`,
+  * Additionally the systemd service file now includes several sandboxing
+    features to isolate the service better. Permissions on `/etc/vaultwarden`,
     `/var/lib/vaultwarden` and `/var/lib/vaultwarden/data` have also been
     tightened to isolate config and data better. It is advised to review and
     obtain maintainer changes if you have customized the systemd service file.
-  * The system user and group named `vaultwarden` are not needed anymore and
-    can be removed - you can keep them if you wish. As long as they still exist
-    the systemd unit will keep using them. Once removed - on the next service
-    start - systemd will once recursively update the ownership of files to the
-    new dynamic user. Files and folders of custom mounts may need to be updated
-    to the new uid and gid.
   * All changes should be reversible by downgrading to your latest package.
     Let us know what went wrong so we can fix the issue.
   .
