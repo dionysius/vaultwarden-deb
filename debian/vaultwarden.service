@@ -1,5 +1,5 @@
 # Please consider only editing this file through systemd drop-in files
-# (e.g. `systemd edit vaultwarden`). This will enable you to get updates
+# (e.g. `systemctl edit vaultwarden`). This will enable you to get updates
 # to this file automatically, without your overrides being lost.
 
 # Refer to the manpage `systemd.unit` for detailed documentation on each option.
@@ -55,6 +55,9 @@ MemoryHigh=2G
 MemoryMax=2.5G
 #TasksMax=512
 
+## Sandboxing and isolation
+# An overview is available using `systemd-analyze security vaultwarden`.
+
 ## Capabilities
 AmbientCapabilities=
 CapabilityBoundingSet=
@@ -62,7 +65,6 @@ CapabilityBoundingSet=
 #AmbientCapabilities=CAP_NET_BIND_SERVICE
 #CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 
-## Sandboxing and isolation
 # Process restrictions
 NoNewPrivileges=true
 RestrictSUIDSGID=true
