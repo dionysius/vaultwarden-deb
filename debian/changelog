@@ -1,3 +1,10 @@
+vaultwarden (1.36.0-1) unstable; urgency=medium
+
+  * update to [1.36.0](https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0), contains security fixes!
+  * reduce waiting period to 3 days. Important releases skip waiting period
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sun, 03 May 2026 17:43:08 +0200
+
 vaultwarden (1.35.8-1) unstable; urgency=medium
 
   * update to [1.35.8](https://github.com/dani-garcia/vaultwarden/releases/tag/1.35.8)
