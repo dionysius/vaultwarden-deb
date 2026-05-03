@@ -27,7 +27,7 @@ After installation, you can configure the service to your liking by editing `/et
 
 ## Release schedule
 
-This project aims to closely match the releases of upstream. The first release in each minor version series starts as a prerelease with a 7-day waiting period to allow upstream to fix oversights in new features or changes. Subsequent releases follow the same waiting period. After the waiting period has passed, all prereleases are automatically promoted to normal releases including new releases.
+This project aims to closely match the releases of upstream. The first release in each minor version series starts as a prerelease with a 3-day waiting period to allow upstream to fix oversights in new features or changes. Subsequent releases follow the same waiting period. After the waiting period has passed, all prereleases are automatically promoted to normal releases including new releases. Important releases skip the waiting period.
 
 ## Build source package
 

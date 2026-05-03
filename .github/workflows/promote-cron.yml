@@ -9,5 +9,5 @@ jobs:
   promote:
     uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@main
     with:
-      in_days: 7
+      in_days: 3
       release_pattern: '{debian/*.*}.*'

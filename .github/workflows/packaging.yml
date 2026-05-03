@@ -45,7 +45,7 @@ jobs:
     uses: dionysius/gbp-gha/.github/workflows/promote-release.yml@main
     needs: [release]
     with:
-      in_days: 7
+      in_days: 3
       release_pattern: '{debian/*.*}.*'
 
 # TODO: remove after year 2026
