@@ -25,7 +25,7 @@ endif
 ifneq (,$(filter features=%,$(DEB_BUILD_OPTIONS)))
 	cargoinstallargs += --features $(patsubst features=%,%,$(filter features=%,$(DEB_BUILD_OPTIONS)))
 else
-	cargoinstallargs += --features sqlite,mysql,postgresql,s3
+	cargoinstallargs += --features sqlite_system,mysql,postgresql,s3
 endif
 
 # convert GNU triplet to Rust target triple
