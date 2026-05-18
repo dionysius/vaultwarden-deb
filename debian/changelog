@@ -1,3 +1,9 @@
+vaultwarden (1.36.0-2) unstable; urgency=medium
+
+  * also build for ubuntu old lts (current lts is now resolute)
+
+ -- dionysius <dragon.dionysius@gmail.com>  Tue, 19 May 2026 00:47:40 +0200
+
 vaultwarden (1.36.0-1) unstable; urgency=medium
 
   * update to [1.36.0](https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0), contains security fixes!
