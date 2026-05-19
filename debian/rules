@@ -48,6 +48,18 @@ ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
 	export CARGO_TARGET_$(subst -,_,$(shell echo $(CARGO_BUILD_TARGET) | tr '[:lower:]' '[:upper:]'))_LINKER = $(CC)
 endif
 
+# First appeared on Ubuntu 26.04 (resolute), which ships GCC 15. On arm64,
+# -flto=auto and -ffat-lto-objects from dpkg-buildflags break bundled C
+# compilation via cargo's cc crate. GCC 15's aarch64 LTO pass hides cross-TU
+# symbols (e.g. FSE_readNCount, HUF_readStats) when optimising fat .o files;
+# ld.bfd then fails to resolve them from the machine-code sections of callers
+# in libzstd_sys.rlib.
+ifeq ($(DEB_HOST_ARCH)_$(shell $(CC) -dumpversion),arm64_15)
+	export CFLAGS   := $(filter-out -flto% -ffat-lto-objects,$(CFLAGS))
+	export CXXFLAGS := $(filter-out -flto% -ffat-lto-objects,$(CXXFLAGS))
+	export LDFLAGS  := $(filter-out -flto% -ffat-lto-objects,$(LDFLAGS))
+endif
+
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
