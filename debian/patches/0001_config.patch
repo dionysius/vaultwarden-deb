@@ -1,8 +1,8 @@
 diff --git a/.env.template b/.env.template
-index 03990820..5fce5c9a 100644
+index a12559ad..8f293dcc 100644
 --- a/.env.template
 +++ b/.env.template
-@@ -5,10 +5,8 @@
+@@ -5,15 +5,17 @@
  ## Be aware that most of these settings will be overridden if they were changed
  ## in the admin interface. Those overrides are stored within DATA_FOLDER/config.json .
  ##
@@ -15,7 +15,16 @@ index 03990820..5fce5c9a 100644
  
  ####################
  ### Data folders ###
-@@ -27,13 +25,13 @@
+ ####################
+ 
++## The vaultwarden systemd service contains isolation directives, so paths to a local
++## folder outside of the service-managed directories require additional unit directives
++## to allow access. See the systemd unit for details.
++
+ ## Main data folder
+ ## This can be a path to local folder or a path to an external location
+ ## depending on features enabled at build time. Possible external locations:
+@@ -27,13 +29,13 @@
  
  ## Individual folders, these override %DATA_FOLDER%
  # RSA_KEY_FILENAME=data/rsa_key
@@ -31,7 +40,7 @@ index 03990820..5fce5c9a 100644
  
  ## HTML template overrides data folder
  ## Must be a local path.
-@@ -42,7 +40,7 @@
+@@ -42,7 +44,7 @@
  # RELOAD_TEMPLATES=false
  
  ## Web vault settings

@@ -46,6 +46,9 @@ CacheDirectory=vaultwarden
 CacheDirectoryMode=0750
 # File creation mask (matching modes above).
 UMask=0027
+# External directories (grant write access to a folder outside of service-managed directories above).
+#ReadWritePaths=/path/to/your/folder
+# BindPaths= is an alternative, but its interactions with other directives here require careful consideration.
 
 ## Connection and process limits
 LimitNOFILE=1048576
