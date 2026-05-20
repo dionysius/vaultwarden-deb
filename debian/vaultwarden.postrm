@@ -11,3 +11,7 @@ if [ "$1" = "abort-upgrade" ] && dpkg --compare-versions "$2" lt "1.35.7-2~"; th
 fi
 
 #DEBHELPER#
+
+if [ "$1" = "purge" ]; then
+  rm -rf /var/cache/vaultwarden || true
+fi
