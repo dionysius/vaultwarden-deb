@@ -1,3 +1,12 @@
+vaultwarden (1.36.0-4) unstable; urgency=medium
+
+  * link against system sqlite3 instead of bundled
+  * link against system zstd
+  * add short notes and references when using alternative local folders (fixes #34)
+  * remove cache on purge
+
+ -- dionysius <dragon.dionysius@gmail.com>  Wed, 20 May 2026 19:45:26 +0200
+
 vaultwarden (1.36.0-3) unstable; urgency=medium
 
   * workaround buildflags for arm64 and gcc15
