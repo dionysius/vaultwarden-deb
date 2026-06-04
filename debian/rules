@@ -59,7 +59,7 @@ export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 # TODO: once bookworm is phased out, add systemd-dev to Build-Depends and drop the dpkg-query fallback.
 SYSTEMD_MAJOR := $(shell pkgconf --modversion systemd 2>/dev/null)
 ifeq ($(SYSTEMD_MAJOR),)
-SYSTEMD_MAJOR := $(shell dpkg-query -W -f='$${Version}' systemd 2>/dev/null | cut -d. -f1)
+SYSTEMD_MAJOR := $(shell dpkg-query -W -f='$${Version}' libsystemd0 2>/dev/null | cut -d. -f1)
 endif
 
 %:
