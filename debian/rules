@@ -54,6 +54,14 @@ export ZSTD_SYS_USE_PKG_CONFIG = 1
 # set version env so compilation can include it
 export VW_VERSION = $(DEB_VERSION_UPSTREAM)
 
+# Detect systemd major version for service file templating.
+# On bookworm systemd.pc ships with the systemd package; on newer distros it moved to systemd-dev.
+# TODO: once bookworm is phased out, add systemd-dev to Build-Depends and drop the dpkg-query fallback.
+SYSTEMD_MAJOR := $(shell pkgconf --modversion systemd 2>/dev/null)
+ifeq ($(SYSTEMD_MAJOR),)
+SYSTEMD_MAJOR := $(shell dpkg-query -W -f='$${Version}' systemd 2>/dev/null | cut -d. -f1)
+endif
+
 %:
 	dh $@
 
@@ -80,3 +88,6 @@ ifeq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
 	ls -1 -d debian/tmp/man/vaultwarden-doc/* > "debian/vaultwarden-doc.manpages"
 endif
 	dh_installman
+
+execute_before_dh_installsystemd:
+	fypp -DSYSTEMD_MAJOR=$(SYSTEMD_MAJOR) debian/vaultwarden.service.fypp debian/vaultwarden.service
