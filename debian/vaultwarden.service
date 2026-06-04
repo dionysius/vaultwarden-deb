@@ -83,7 +83,7 @@ ProtectProc=noaccess
 ProcSubset=pid
 
 # Namespace isolation
-PrivateTmp=disconnected
+PrivateTmp=true
 PrivateDevices=true
 PrivateIPC=true
 PrivateBPF=true
