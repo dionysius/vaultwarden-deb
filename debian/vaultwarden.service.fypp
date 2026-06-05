@@ -36,8 +36,13 @@ WorkingDirectory=/var/lib/vaultwarden
 ## Permissions and directories
 User=vaultwarden
 Group=vaultwarden
+#:if SYSTEMD_MAJOR >= 257
 # Read-only configuration directory (read-only mount, permissions managed by tmpfiles, warns if mode differs).
 ConfigurationDirectory=vaultwarden::ro
+#:else
+# Configuration directory (permissions managed by tmpfiles, warns if mode differs).
+ConfigurationDirectory=vaultwarden
+#:endif
 ConfigurationDirectoryMode=0500
 # Writable directories (read-write for the service, read-only for the group, reapplies permissions recursively if different).
 StateDirectory=vaultwarden
@@ -83,21 +88,33 @@ ProtectProc=noaccess
 ProcSubset=pid
 
 # Namespace isolation
+#:if SYSTEMD_MAJOR >= 257
 PrivateTmp=disconnected
+#:else
+PrivateTmp=true
+#:endif
 PrivateDevices=true
 PrivateIPC=true
+#:if SYSTEMD_MAJOR >= 258
 PrivateBPF=true
+#:endif
 
 # Kernel and system protection
 ProtectClock=true
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectKernelLogs=true
+#:if SYSTEMD_MAJOR >= 257
 ProtectControlGroups=strict
+#:else
+ProtectControlGroups=true
+#:endif
 
 # Execution restrictions
 MemoryDenyWriteExecute=true
+#:if SYSTEMD_MAJOR >= 255
 SetLoginEnvironment=false
+#:endif
 
 # System call and network filtering
 SystemCallFilter=@system-service
