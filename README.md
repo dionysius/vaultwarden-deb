@@ -25,6 +25,12 @@ After installation, you can configure the service to your liking by editing `/et
 - [Get in touch](https://github.com/dani-garcia/vaultwarden/wiki#get-in-touch) - For issues with Vaultwarden
 - [Issues](https://github.com/dionysius/vaultwarden-deb/issues) and [Discussions](https://github.com/dionysius/vaultwarden-deb/discussions) - For issues with or related to these packages
 
+## Security and stability
+
+These packages favour the distribution-native way of running software. Wherever possible the packages link against system libraries and reuse distribution packages, so they receive the distribution's regular security updates and stability, with newer distributions or backports providing more recent versions.
+
+By default the systemd services are extensively sandboxed, isolating the service from the rest of the system, while the configuration and data directories are restricted to the service's own user. Complex setups may need extra configuration, freely adjustable in the service file, whose comments and/or the [Wiki](https://github.com/dionysius/vaultwarden-deb/wiki) should cover the common cases.
+
 ## Release schedule
 
 This project aims to closely match the releases of upstream. The first release in each minor version series starts as a prerelease with a 3-day waiting period to allow upstream to fix oversights in new features or changes. Subsequent releases follow the same waiting period. After the waiting period has passed, all prereleases are automatically promoted to normal releases including new releases. Important releases may skip the waiting period.
