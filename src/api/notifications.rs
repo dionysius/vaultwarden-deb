@@ -6,17 +6,22 @@ use std::{
 
 use chrono::{NaiveDateTime, Utc};
 use rmpv::Value;
-use rocket::{futures::StreamExt, Route};
+use rocket::{Route, futures::StreamExt};
 use rocket_ws::{Message, WebSocket};
 use tokio::sync::mpsc::Sender;
 
 use crate::{
+    CONFIG, Error,
     auth::{ClientIp, WsAccessTokenHeader},
     db::{
-        models::{AuthRequestId, Cipher, CollectionId, Device, DeviceId, Folder, PushId, Send as DbSend, User, UserId},
         DbConn,
+        models::{AuthRequestId, Cipher, CollectionId, Device, DeviceId, Folder, PushId, Send as DbSend, User, UserId},
     },
-    Error, CONFIG,
+};
+
+use super::{
+    push::push_auth_request, push::push_auth_response, push_cipher_update, push_folder_update, push_logout,
+    push_send_update, push_user_update,
 };
 
 pub static WS_USERS: LazyLock<Arc<WebSocketUsers>> = LazyLock::new(|| {
@@ -28,13 +33,13 @@ pub static WS_USERS: LazyLock<Arc<WebSocketUsers>> = LazyLock::new(|| {
 pub static WS_ANONYMOUS_SUBSCRIPTIONS: LazyLock<Arc<AnonymousWebSocketSubscriptions>> = LazyLock::new(|| {
     Arc::new(AnonymousWebSocketSubscriptions {
         map: Arc::new(dashmap::DashMap::new()),
+        connections: Arc::new(dashmap::DashMap::new()),
     })
 });
 
-use super::{
-    push::push_auth_request, push::push_auth_response, push_cipher_update, push_folder_update, push_logout,
-    push_send_update, push_user_update,
-};
+/// The anonymous hub needs no authentication, so bound how much a single client can hold open.
+/// One connection is needed per pending login request, several at once are only expected behind NAT.
+const MAX_ANONYMOUS_CONNECTIONS_PER_IP: u32 = 25;
 
 static NOTIFICATIONS_DISABLED: LazyLock<bool> = LazyLock::new(|| !CONFIG.enable_websocket() && !CONFIG.push_enabled());
 
@@ -82,14 +87,21 @@ impl Drop for WSEntryMapGuard {
 struct WSAnonymousEntryMapGuard {
     subscriptions: Arc<AnonymousWebSocketSubscriptions>,
     token: String,
+    entry_uuid: uuid::Uuid,
     addr: IpAddr,
 }
 
 impl WSAnonymousEntryMapGuard {
-    fn new(subscriptions: Arc<AnonymousWebSocketSubscriptions>, token: String, addr: IpAddr) -> Self {
+    fn new(
+        subscriptions: Arc<AnonymousWebSocketSubscriptions>,
+        token: String,
+        entry_uuid: uuid::Uuid,
+        addr: IpAddr,
+    ) -> Self {
         Self {
             subscriptions,
             token,
+            entry_uuid,
             addr,
         }
     }
@@ -98,11 +110,15 @@ impl WSAnonymousEntryMapGuard {
 impl Drop for WSAnonymousEntryMapGuard {
     fn drop(&mut self) {
         info!("Closing WS connection from {}", self.addr);
-        self.subscriptions.map.remove(&self.token);
+        if let Some(mut entry) = self.subscriptions.map.get_mut(&self.token) {
+            entry.retain(|(uuid, _)| uuid != &self.entry_uuid);
+        }
+        self.subscriptions.map.remove_if(&self.token, |_, senders| senders.is_empty());
+        self.subscriptions.release(self.addr);
     }
 }
 
-#[allow(tail_expr_drop_order)]
+#[expect(tail_expr_drop_order)]
 #[get("/hub?<data..>")]
 fn websockets_hub<'r>(
     ws: WebSocket,
@@ -186,7 +202,7 @@ fn websockets_hub<'r>(
     })
 }
 
-#[allow(tail_expr_drop_order)]
+#[expect(tail_expr_drop_order)]
 #[get("/anonymous-hub?<token..>")]
 fn anonymous_websockets_hub<'r>(ws: WebSocket, token: String, ip: ClientIp) -> Result<rocket_ws::Stream!['r], Error> {
     info!("Accepting Anonymous Rocket WS connection from {}", ip.ip);
@@ -194,12 +210,19 @@ fn anonymous_websockets_hub<'r>(ws: WebSocket, token: String, ip: ClientIp) -> R
     let (mut rx, guard) = {
         let subscriptions = Arc::clone(&WS_ANONYMOUS_SUBSCRIPTIONS);
 
-        // Add a channel to send messages to this client to the map
+        if !subscriptions.try_reserve(ip.ip) {
+            err_code!("Too many connections", 429)
+        }
+
+        // Add a channel to send messages to this client to the map.
+        // Clients reconnect with the same token while a login request is still pending, so keep
+        // every subscriber instead of replacing, otherwise the older one takes the newer one down.
         let (tx, rx) = tokio::sync::mpsc::channel::<Message>(100);
-        subscriptions.map.insert(token.clone(), tx);
+        let entry_uuid = uuid::Uuid::new_v4();
+        subscriptions.map.entry(token.clone()).or_default().push((entry_uuid, tx));
 
         // Once the guard goes out of scope, the connection will have been closed and the entry will be deleted from the map
-        (rx, WSAnonymousEntryMapGuard::new(subscriptions, token, ip.ip))
+        (rx, WSAnonymousEntryMapGuard::new(subscriptions, token, entry_uuid, ip.ip))
     };
 
     Ok({
@@ -268,14 +291,15 @@ fn serialize(val: &Value) -> Vec<u8> {
     let mut len_buf: Vec<u8> = Vec::new();
 
     loop {
-        let mut size_part = size & 0x7f;
+        #[expect(clippy::cast_possible_truncation, reason = "masked to 7 bits, fits u8")]
+        let mut size_part = (size & 0x7f) as u8;
         size >>= 7;
 
         if size > 0 {
             size_part |= 0x80;
         }
 
-        len_buf.push(size_part as u8);
+        len_buf.push(size_part);
 
         if size == 0 {
             break;
@@ -329,7 +353,7 @@ pub struct WebSocketUsers {
 impl WebSocketUsers {
     async fn send_update(&self, user_id: &UserId, data: &[u8]) {
         if let Some(user) = self.map.get(user_id.as_ref()).map(|v| v.clone()) {
-            for (_, sender) in user.iter() {
+            for (_, sender) in &user {
                 if let Err(e) = sender.send(Message::binary(data)).await {
                     error!("Error sending WS update {e}");
                 }
@@ -533,12 +557,39 @@ impl WebSocketUsers {
 
 #[derive(Clone)]
 pub struct AnonymousWebSocketSubscriptions {
-    map: Arc<dashmap::DashMap<String, Sender<Message>>>,
+    map: Arc<dashmap::DashMap<String, Vec<UserSenders>>>,
+    connections: Arc<dashmap::DashMap<IpAddr, u32>>,
 }
 
 impl AnonymousWebSocketSubscriptions {
+    /// Takes a connection slot for this address, returns false when it already reached the limit.
+    fn try_reserve(&self, addr: IpAddr) -> bool {
+        let mut count = self.connections.entry(addr).or_insert(0);
+        if *count >= MAX_ANONYMOUS_CONNECTIONS_PER_IP {
+            return false;
+        }
+        *count += 1;
+        true
+    }
+
+    /// Releases a slot taken by `try_reserve`.
+    fn release(&self, addr: IpAddr) {
+        let empty = if let Some(mut count) = self.connections.get_mut(&addr) {
+            *count = count.saturating_sub(1);
+            *count == 0
+        } else {
+            false
+        };
+        // Only remove once the guard above is dropped, otherwise this deadlocks.
+        if empty {
+            self.connections.remove_if(&addr, |_, count| *count == 0);
+        }
+    }
+
     async fn send_update(&self, token: &str, data: &[u8]) {
-        if let Some(sender) = self.map.get(token).map(|v| v.clone()) {
+        // Clone the senders so the map isn't kept locked while sending.
+        let senders = self.map.get(token).map(|v| v.clone()).unwrap_or_default();
+        for (_, sender) in senders {
             if let Err(e) = sender.send(Message::binary(data)).await {
                 error!("Error sending WS update {e}");
             }
@@ -582,7 +633,7 @@ fn create_update(payload: Vec<(Value, Value)>, ut: UpdateType, acting_device_id:
         V::Nil,
         "ReceiveMessage".into(),
         V::Array(vec![V::Map(vec![
-            ("ContextId".into(), acting_device_id.map(|v| v.to_string().into()).unwrap_or_else(|| V::Nil)),
+            ("ContextId".into(), acting_device_id.map_or(V::Nil, |v| v.to_string().into())),
             ("Type".into(), (ut as i32).into()),
             ("Payload".into(), payload.into()),
         ])]),
