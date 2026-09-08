@@ -1,0 +1,76 @@
+diff --git a/build.rs b/build.rs
+--- a/build.rs	2026-09-08 17:00:02.797460546 +0200
++++ b/build.rs	2026-09-08 17:00:08.013364057 +0200
+@@ -39,6 +39,13 @@
+         println!("cargo:rustc-env=VW_VERSION={version}");
+         println!("cargo:rustc-env=CARGO_PKG_VERSION={version}");
+     }
++
++    // Distribution this build was produced for, set by the vaultwarden-deb packaging (debian/rules).
++    // Rebuild when it changes even though no source file did, since it's otherwise invisible to Cargo's fingerprinting.
++    println!("cargo:rerun-if-env-changed=DEB_DISTRIBUTION");
++    if let Ok(dist) = env::var("DEB_DISTRIBUTION") {
++        println!("cargo:rustc-env=DEB_DISTRIBUTION={dist}");
++    }
+ }
+ 
+ fn run(args: &[&str]) -> Result<String, Error> {
+diff --git a/src/util.rs b/src/util.rs
+--- a/src/util.rs	2026-09-08 17:00:02.801460472 +0200
++++ b/src/util.rs	2026-09-08 17:00:13.217267789 +0200
+@@ -568,6 +568,18 @@
+     }
+ }
+ 
++/// `PRETTY_NAME` of the OS currently running this process, read from `/etc/os-release`.
++pub fn os_release_pretty_name() -> String {
++    let Ok(contents) = std::fs::read_to_string("/etc/os-release") else {
++        return String::new();
++    };
++    contents
++        .lines()
++        .find_map(|line| line.strip_prefix("PRETTY_NAME="))
++        .map(|v| v.trim_matches('"').to_owned())
++        .unwrap_or_default()
++}
++
+ #[derive(Deserialize)]
+ struct WebVaultVersion {
+     version: String,
+diff --git a/src/api/admin.rs b/src/api/admin.rs
+--- a/src/api/admin.rs	2026-09-08 17:00:02.801460472 +0200
++++ b/src/api/admin.rs	2026-09-08 17:00:21.901107153 +0200
+@@ -34,7 +34,7 @@
+     sso::FAKE_SSO_IDENTIFIER,
+     util::{
+         FeatureFlagFilter, NumberOrString, container_base_image, format_naive_datetime_local, get_active_web_release,
+-        get_display_size, is_running_in_container, parse_experimental_client_feature_flags,
++        get_display_size, is_running_in_container, os_release_pretty_name, parse_experimental_client_feature_flags,
+     },
+ };
+ 
+@@ -804,6 +804,8 @@
+         "invalid_feature_flags": invalid_feature_flags,
+         "host_arch": env::consts::ARCH,
+         "host_os":  env::consts::OS,
++        "os_release": os_release_pretty_name(),
++        "deb_build_distribution": option_env!("DEB_DISTRIBUTION").unwrap_or_default(),
+         "tz_env": env::var("TZ").unwrap_or_default(),
+         "server_time_local": Local::now().format("%Y-%m-%d %H:%M:%S %Z").to_string(),
+         "server_time": Utc::now().format("%Y-%m-%d %H:%M:%S UTC").to_string(), // Run the server date/time check as late as possible to minimize the time difference
+diff --git a/src/static/scripts/admin_diagnostics.js b/src/static/scripts/admin_diagnostics.js
+--- a/src/static/scripts/admin_diagnostics.js	2026-09-08 17:00:02.805460398 +0200
++++ b/src/static/scripts/admin_diagnostics.js	2026-09-08 17:00:32.840904792 +0200
+@@ -89,6 +89,12 @@
+ 
+     supportString += `* Vaultwarden version: v${dj.current_release}\n`;
+     supportString += `* Web-vault version: v${dj.active_web_release}\n`;
++    if (dj.deb_build_distribution) {
++        supportString += `* Package: dionysius/vaultwarden-deb (${dj.deb_build_distribution})\n`;
++    }
++    if (dj.os_release) {
++        supportString += `* Distribution: ${dj.os_release}\n`;
++    }
+     supportString += `* OS/Arch: ${dj.host_os}/${dj.host_arch}\n`;
+     supportString += `* Running within a container: ${yn(dj.running_within_container)} (Base: ${dj.container_base_image})\n`;
+     supportString += `* Database type: ${dj.db_type}\n`;
