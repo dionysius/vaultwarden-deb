@@ -1,3 +1,10 @@
+vaultwarden (1.37.3-1) unstable; urgency=medium
+
+  * update to [1.37.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.3)
+  * systemd restart on failure, just in case
+
+ -- dionysius <dragon.dionysius@gmail.com>  Sun, 13 Sep 2026 20:11:51 +0200
+
 vaultwarden (1.37.2-1) unstable; urgency=medium
 
   * update to [1.37.2](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.2)
