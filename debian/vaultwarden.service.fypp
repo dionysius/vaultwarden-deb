@@ -32,6 +32,9 @@ Environment=ENV_FILE=%E/vaultwarden/vaultwarden.env
 Type=exec
 ExecStart=/usr/bin/vaultwarden
 WorkingDirectory=/var/lib/vaultwarden
+# Restart on failure
+Restart=on-failure
+RestartSec=5s
 
 ## Permissions and directories
 User=vaultwarden
