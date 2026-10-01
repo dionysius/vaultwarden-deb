@@ -122,7 +122,7 @@ SetLoginEnvironment=false
 # System call and network filtering
 SystemCallFilter=@system-service
 SystemCallArchitectures=native
-RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
 RestrictFileSystems=@basic-api @common-block
 RestrictRealtime=true
 
