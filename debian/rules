@@ -10,9 +10,15 @@ MAKEFLAGS += --no-print-directory
 # I had to make a compatibility to allow `cargo` to be provided with help of `rustup` since my distro didn't provide a recent enough version. Only using official apt sources would be cleaner.
 export PATH := $(HOME)/.cargo/bin:$(PATH)
 
+# cargo debuginfo level, override with DEB_BUILD_OPTIONS=debuginfo=<level> (none, line-tables-only, limited, full)
+cargodebug = full
+ifneq (,$(filter debuginfo=%,$(DEB_BUILD_OPTIONS)))
+	cargodebug = $(patsubst debuginfo=%,%,$(filter debuginfo=%,$(DEB_BUILD_OPTIONS)))
+endif
+
 # override release profile with optimizations, debug
 cargoinstallargs = --config profile.release.opt-level=3 \
-                   --config profile.release.debug=true \
+                   --config profile.release.debug=\"$(cargodebug)\" \
                    --config profile.release.split-debuginfo=\"off\" \
                    --config profile.release.strip=\"none\"
 

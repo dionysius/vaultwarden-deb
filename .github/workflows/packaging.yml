@@ -24,6 +24,8 @@ jobs:
       images: '["debian:stable", "debian:oldstable", "ubuntu:latest", "ubuntu:oldlts"]'
       architectures: '["amd64", "arm64", "riscv64"]'
       natives: '["amd64"]'
+      # full debuginfo exceeds the runner's memory during fat LTO
+      DEB_BUILD_OPTIONS: debuginfo=line-tables-only
       before_build_deps_install: |
         # install rustup manually if not available as distribution package (fallback)
         # mk-build-deps would install rustup if available
