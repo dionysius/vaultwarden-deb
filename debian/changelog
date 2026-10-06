@@ -1,9 +1,10 @@
-vaultwarden (1.37.4-1) unstable; urgency=medium
+vaultwarden (1.37.4-2) unstable; urgency=medium
 
   [ Fredrik Roubert ]
   * Add AF_NETLINK to sandbox restriction, required by USE_SENDMAIL. (#44)
 
   [ dionysius ]
+  * make cargo debuginfo level overridable via DEB_BUILD_OPTIONS, use line-tables-only in CI
   * update to [1.37.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.4), contains security fixes!
 
  -- dionysius <dragon.dionysius@gmail.com>  Tue, 06 Oct 2026 14:32:25 +0200
