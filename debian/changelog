@@ -1,3 +1,13 @@
+vaultwarden (1.37.4-1) unstable; urgency=medium
+
+  [ Fredrik Roubert ]
+  * Add AF_NETLINK to sandbox restriction, required by USE_SENDMAIL. (#44)
+
+  [ dionysius ]
+  * update to [1.37.4](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.4), contains security fixes!
+
+ -- dionysius <dragon.dionysius@gmail.com>  Tue, 06 Oct 2026 14:32:25 +0200
+
 vaultwarden (1.37.3-1) unstable; urgency=medium
 
   * update to [1.37.3](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.3)
