@@ -11,12 +11,8 @@ After=network.target
 # If you want to expose the server to the network directly, you may find the following useful:
 #After=network-online.target
 
-# The default database backend, SQLite, does not require any external services.
-# However, other backends (MariaDB, MySQL, PostgreSQL) - if running on this system - should specify dependencies,
-# such that Vaultwarden is only started after (`After=`) the DB has successfully (`Requires=`) started.
-# Example for MariaDB:
-#After=mariadb.service
-#Requires=mariadb.service
+# A database on this host starts before and stops after this unit.
+After=mariadb.service mysql.service postgresql.service
 
 # If running Vaultwarden behind a reverse proxy - running on this system - consider ordering it before also:
 #Before=nginx.service
