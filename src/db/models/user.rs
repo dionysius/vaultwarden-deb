@@ -19,7 +19,8 @@ use crate::{
 use macros::UuidFromParam;
 
 use super::{
-    Cipher, Device, EmergencyAccess, Favorite, Folder, Membership, MembershipType, TwoFactor, TwoFactorIncomplete,
+    AuthRequest, Cipher, Device, EmergencyAccess, Favorite, Folder, Membership, MembershipType, TwoFactor,
+    TwoFactorIncomplete,
 };
 
 #[derive(Identifiable, Queryable, Insertable, AsChangeset, Selectable)]
@@ -168,6 +169,10 @@ impl User {
             &self.password_hash,
             self.password_iterations.cast_unsigned(),
         )
+    }
+
+    pub fn master_password_salt(&self) -> String {
+        self.email.trim().to_lowercase()
     }
 
     pub fn check_valid_recovery_code(&self, recovery_code: &str) -> bool {
@@ -357,7 +362,7 @@ impl User {
         }
     }
 
-    pub async fn delete(self, conn: &DbConn) -> EmptyResult {
+    pub async fn delete(&self, conn: &DbConn) -> EmptyResult {
         for member in Membership::find_confirmed_by_user(&self.uuid, conn).await {
             if member.atype == MembershipType::Owner
                 && Membership::count_confirmed_by_org_and_type(&member.org_uuid, MembershipType::Owner, conn).await <= 1
@@ -373,13 +378,14 @@ impl User {
         Cipher::delete_all_by_user(&self.uuid, conn).await?;
         Favorite::delete_all_by_user(&self.uuid, conn).await?;
         Folder::delete_all_by_user(&self.uuid, conn).await?;
+        AuthRequest::delete_all_by_user(&self.uuid, conn).await?;
         Device::delete_all_by_user(&self.uuid, conn).await?;
         TwoFactor::delete_all_by_user(&self.uuid, conn).await?;
         TwoFactorIncomplete::delete_all_by_user(&self.uuid, conn).await?;
         Invitation::take(&self.email, conn).await; // Delete invitation if any
 
         conn.run(move |conn| {
-            diesel::delete(users::table.filter(users::uuid.eq(self.uuid))).execute(conn).map_res("Error deleting user")
+            diesel::delete(users::table.filter(users::uuid.eq(&self.uuid))).execute(conn).map_res("Error deleting user")
         })
         .await
     }

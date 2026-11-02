@@ -13,7 +13,7 @@ use crate::{
     api::{
         AnonymousNotify, ApiResult, EmptyResult, JsonResult, Notify, PasswordOrOtpData, UpdateType,
         core::{accept_org_invite, log_user_event, two_factor::email},
-        master_password_policy, register_push_device, unregister_push_device,
+        master_password_policy, push_logout_to_relay, register_push_device, unregister_push_device,
     },
     auth::{ClientHeaders, ClientIp, Headers, decode_delete, decode_invite, decode_verify_email},
     crypto,
@@ -91,6 +91,15 @@ pub struct KDFData {
     kdf_memory: Option<i32>,
     #[serde(alias = "parallelism")]
     kdf_parallelism: Option<i32>,
+}
+
+impl KDFData {
+    pub(super) fn matches_user(&self, user: &User) -> bool {
+        self.kdf == user.client_kdf_type
+            && self.kdf_iterations == user.client_kdf_iter
+            && self.kdf_memory == user.client_kdf_memory
+            && self.kdf_parallelism == user.client_kdf_parallelism
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -484,8 +493,7 @@ async fn post_set_password(data: Json<SetPasswordData>, headers: Headers, conn: 
         Membership::accept_user_invitations(&user.uuid, &conn).await?;
     }
 
-    log_user_event(EventType::UserChangedPassword as i32, &user.uuid, headers.device.atype, &headers.ip.ip, &conn)
-        .await;
+    log_user_event(EventType::UserChangedPassword, &user.uuid, headers.device.atype, &headers.ip.ip, &conn).await;
 
     user.save(&conn).await?;
 
@@ -631,8 +639,7 @@ async fn post_password(data: Json<ChangePassData>, headers: Headers, conn: DbCon
         err!("Invalid password")
     }
 
-    log_user_event(EventType::UserChangedPassword as i32, &user.uuid, headers.device.atype, &headers.ip.ip, &conn)
-        .await;
+    log_user_event(EventType::UserChangedPassword, &user.uuid, headers.device.atype, &headers.ip.ip, &conn).await;
 
     let (new_master_password_hash, new_key) =
         if let (Some(unlock_data), Some(authentication_data)) = (data.unlock_data, data.authentication_data) {
@@ -717,21 +724,35 @@ fn set_kdf_data(user: &mut User, data: &KDFData) -> EmptyResult {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct AuthenticationData {
+pub(super) struct AuthenticationData {
     #[serde(alias = "Salt")]
     salt: String,
     #[serde(alias = "Kdf")]
-    kdf: KDFData,
+    pub(super) kdf: KDFData,
     #[serde(alias = "MasterPasswordAuthenticationHash")]
-    master_password_authentication_hash: String,
+    pub(super) master_password_authentication_hash: String,
+}
+
+impl AuthenticationData {
+    pub(super) fn check(&self, user: &User, unlock: &UnlockData) -> EmptyResult {
+        if self.kdf != unlock.kdf {
+            err!("KDF settings must be equal for authentication and unlock")
+        }
+
+        if self.salt != user.master_password_salt() || self.salt != unlock.salt {
+            err!("Invalid master password salt")
+        }
+
+        Ok(())
+    }
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct UnlockData {
+pub(super) struct UnlockData {
     salt: String,
     kdf: KDFData,
-    master_key_wrapped_user_key: String,
+    pub(super) master_key_wrapped_user_key: String,
 }
 
 #[derive(Deserialize)]
@@ -750,13 +771,7 @@ async fn post_kdf(data: Json<ChangeKdfData>, headers: Headers, conn: DbConn, nt:
         err!("Invalid password")
     }
 
-    if data.authentication_data.kdf != data.unlock_data.kdf {
-        err!("KDF settings must be equal for authentication and unlock")
-    }
-
-    if headers.user.email != data.authentication_data.salt || headers.user.email != data.unlock_data.salt {
-        err!("Invalid master password salt")
-    }
+    data.authentication_data.check(&headers.user, &data.unlock_data)?;
 
     let mut user = headers.user;
 
@@ -1133,7 +1148,11 @@ async fn post_email_token(data: Json<EmailTokenData>, headers: Headers, conn: Db
             error!("Error sending change-email email: {e:#?}");
         }
     } else {
-        debug!("Email change request for user ({}) to email ({}) with token ({token})", user.uuid, data.new_email);
+        debug!(
+            "Email change request for user ({}) to email ({}) with token ({token})",
+            user.uuid,
+            data.new_email.escape_debug()
+        );
     }
 
     user.email_new = Some(data.new_email);
@@ -1286,7 +1305,7 @@ struct DeleteRecoverTokenData {
 }
 
 #[post("/accounts/delete-recover-token", data = "<data>")]
-async fn post_delete_recover_token(data: Json<DeleteRecoverTokenData>, conn: DbConn) -> EmptyResult {
+async fn post_delete_recover_token(data: Json<DeleteRecoverTokenData>, conn: DbConn, nt: Notify<'_>) -> EmptyResult {
     let data: DeleteRecoverTokenData = data.into_inner();
 
     let Ok(claims) = decode_delete(&data.token) else {
@@ -1300,22 +1319,44 @@ async fn post_delete_recover_token(data: Json<DeleteRecoverTokenData>, conn: DbC
     if claims.sub != *user.uuid {
         err!("Invalid claim");
     }
-    user.delete(&conn).await
+
+    // The devices are deleted together with the user, so check for push devices beforehand
+    let has_push_device = CONFIG.push_enabled() && Device::check_user_has_push_device(&user.uuid, &conn).await;
+    user.delete(&conn).await?;
+
+    nt.send_logout(&user, None, &conn).await;
+    if has_push_device {
+        push_logout_to_relay(&user, None);
+    }
+    Ok(())
 }
 
 #[post("/accounts/delete", data = "<data>")]
-async fn post_delete_account(data: Json<PasswordOrOtpData>, headers: Headers, conn: DbConn) -> EmptyResult {
-    delete_account(data, headers, conn).await
+async fn post_delete_account(
+    data: Json<PasswordOrOtpData>,
+    headers: Headers,
+    conn: DbConn,
+    nt: Notify<'_>,
+) -> EmptyResult {
+    delete_account(data, headers, conn, nt).await
 }
 
 #[delete("/accounts", data = "<data>")]
-async fn delete_account(data: Json<PasswordOrOtpData>, headers: Headers, conn: DbConn) -> EmptyResult {
+async fn delete_account(data: Json<PasswordOrOtpData>, headers: Headers, conn: DbConn, nt: Notify<'_>) -> EmptyResult {
     let data: PasswordOrOtpData = data.into_inner();
     let user = headers.user;
 
     data.validate(&user, true, &conn).await?;
 
-    user.delete(&conn).await
+    // The devices are deleted together with the user, so check for push devices beforehand
+    let has_push_device = CONFIG.push_enabled() && Device::check_user_has_push_device(&user.uuid, &conn).await;
+    user.delete(&conn).await?;
+
+    nt.send_logout(&user, None, &conn).await;
+    if has_push_device {
+        push_logout_to_relay(&user, None);
+    }
+    Ok(())
 }
 
 #[expect(clippy::needless_pass_by_value, reason = "Not beneficial for Headers")]
@@ -1366,7 +1407,7 @@ async fn password_hint(data: Json<PasswordHintData>, ip: ClientIp, conn: DbConn)
                 mail::send_password_hint(email, hint).await?;
                 Ok(())
             } else if let Some(hint) = hint {
-                err!(format!("Your password hint is: {hint}"));
+                err_silent!(format!("Your password hint is: {hint}"));
             } else {
                 err!(NO_HINT);
             }
@@ -1679,7 +1720,7 @@ async fn post_auth_request(
     nt.send_auth_request(&user.uuid, &auth_request.uuid, &device, &conn).await;
 
     log_user_event(
-        EventType::UserRequestedDeviceApproval as i32,
+        EventType::UserRequestedDeviceApproval,
         &user.uuid,
         client_headers.device_type,
         &client_headers.ip.ip,
@@ -1773,7 +1814,7 @@ async fn put_auth_request(
         nt.send_auth_response(&auth_request.user_uuid, &auth_request.uuid, &headers.device, &conn).await;
 
         log_user_event(
-            EventType::OrganizationUserApprovedAuthRequest as i32,
+            EventType::OrganizationUserApprovedAuthRequest,
             &headers.user.uuid,
             headers.device.atype,
             &headers.ip.ip,
@@ -1784,7 +1825,7 @@ async fn put_auth_request(
         // If denied, there's no reason to keep the request
         auth_request.delete(&conn).await?;
         log_user_event(
-            EventType::OrganizationUserRejectedAuthRequest as i32,
+            EventType::OrganizationUserRejectedAuthRequest,
             &headers.user.uuid,
             headers.device.atype,
             &headers.ip.ip,

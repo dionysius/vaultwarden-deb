@@ -46,6 +46,7 @@ pub fn routes() -> Vec<Route> {
         post_prelogin,
         prelogin_password,
         register_verification_email,
+        register_verification_email_clicked,
         register_finish,
         prevalidate,
         authorize,
@@ -111,14 +112,14 @@ async fn login(data: Form<ConnectData>, client_header: ClientHeaders, conn: DbCo
             .await?;
             Ok(Json(tokens.to_json()))
         }
-        t => err!("Invalid type", t),
+        t => err!("Invalid type", t.escape_debug().to_string()),
     };
 
     if let Some(user_id) = user_id {
         match &login_result {
             Ok(_) => {
                 log_user_event(
-                    EventType::UserLoggedIn as i32,
+                    EventType::UserLoggedIn,
                     &user_id,
                     client_header.device_type,
                     &client_header.ip.ip,
@@ -128,8 +129,7 @@ async fn login(data: Form<ConnectData>, client_header: ClientHeaders, conn: DbCo
             }
             Err(e) => {
                 if let Some(ev) = e.get_event() {
-                    log_user_event(ev.event as i32, &user_id, client_header.device_type, &client_header.ip.ip, &conn)
-                        .await;
+                    log_user_event(ev.event, &user_id, client_header.device_type, &client_header.ip.ip, &conn).await;
                 }
             }
         }
@@ -448,9 +448,9 @@ async fn password_login(data: ConnectData, user_id: &mut Option<UserId>, conn: &
     if user.verified_at.is_none() && CONFIG.mail_enabled() && CONFIG.signups_verify() {
         if user.last_verifying_at.is_none()
             || now.signed_duration_since(user.last_verifying_at.unwrap()).num_seconds()
-                > CONFIG.signups_verify_resend_time().cast_signed()
+                > i64::from(CONFIG.signups_verify_resend_time())
         {
-            let resend_limit = CONFIG.signups_verify_resend_limit().cast_signed();
+            let resend_limit = i32::from(CONFIG.signups_verify_resend_limit());
             if resend_limit == 0 || user.login_verify_count < resend_limit {
                 // We want to send another email verification if we require signups to verify
                 // their email address, and we haven't sent them a reminder in a while...
@@ -904,7 +904,7 @@ async fn twofactor_auth(
 
             enforce_2fa_policy(user, &user.uuid, device.atype, &ip.ip, conn).await?;
 
-            log_user_event(EventType::UserRecovered2fa as i32, &user.uuid, device.atype, &ip.ip, conn).await;
+            log_user_event(EventType::UserRecovered2fa, &user.uuid, device.atype, &ip.ip, conn).await;
 
             if CONFIG.mail_enabled()
                 && let Err(e) =
@@ -974,7 +974,7 @@ async fn json_err_twofactor(providers: &[i32], user: &User, data: &ConnectData, 
             }
 
             Some(tf_type @ TwoFactorType::YubiKey) => {
-                let Some(twofactor) = TwoFactor::find_by_user_and_type(user_id, tf_type as i32, conn).await else {
+                let Some(twofactor) = TwoFactor::find_by_user_and_type(user_id, tf_type, conn).await else {
                     err!("No YubiKey devices registered")
                 };
 
@@ -986,7 +986,7 @@ async fn json_err_twofactor(providers: &[i32], user: &User, data: &ConnectData, 
             }
 
             Some(tf_type @ TwoFactorType::Email) => {
-                let Some(twofactor) = TwoFactor::find_by_user_and_type(user_id, tf_type as i32, conn).await else {
+                let Some(twofactor) = TwoFactor::find_by_user_and_type(user_id, tf_type, conn).await else {
                     err!("No twofactor email registered")
                 };
 
@@ -1033,6 +1033,13 @@ struct RegisterVerificationData {
     email: String,
     name: Option<String>,
     // receiveMarketingEmails: bool,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct RegisterVerificationEmailClickedData {
+    email: String,
+    email_verification_token: String,
 }
 
 #[derive(rocket::Responder)]
@@ -1095,6 +1102,25 @@ async fn register_verification_email(
             RegisterVerificationResponse::PlainToken(token)
         })
     }
+}
+
+#[post("/accounts/register/verification-email-clicked", data = "<data>")]
+async fn register_verification_email_clicked(
+    data: Json<RegisterVerificationEmailClickedData>,
+    conn: DbConn,
+) -> EmptyResult {
+    let data = data.into_inner();
+    let token_valid = auth::decode_register_verify(&data.email_verification_token)
+        .is_ok_and(|claims| claims.verified && claims.sub.eq_ignore_ascii_case(&data.email));
+    let user_exists = User::find_by_mail(&data.email, &conn)
+        .await
+        .is_some_and(|user| !user.password_hash.is_empty() || user.private_key.is_some());
+
+    if !token_valid || user_exists {
+        err!("Expired link. Please restart registration or try logging in. You may already have an account")
+    }
+
+    Ok(())
 }
 
 #[post("/accounts/register/finish", data = "<data>")]
