@@ -52,6 +52,10 @@ ifneq ($(DEB_BUILD_ARCH),$(DEB_HOST_ARCH))
 	export PKG_CONFIG_ALLOW_CROSS = 1
 	# configure linker for cargo
 	export CARGO_TARGET_$(subst -,_,$(shell echo $(CARGO_BUILD_TARGET) | tr '[:lower:]' '[:upper:]'))_LINKER = $(CC)
+	# cc-rs also applies the generic C(XX)FLAGS to build-machine code (build scripts, proc-macros), pass them for the target only
+	export TARGET_CFLAGS = $(CFLAGS)
+	export TARGET_CXXFLAGS = $(CXXFLAGS)
+	unexport CFLAGS CXXFLAGS
 endif
 
 # use system zstd via pkg-config instead of bundling from source
