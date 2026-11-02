@@ -1,0 +1,47 @@
+Description: notify systemd once the server is ready
+ The server sends READY=1 to $NOTIFY_SOCKET (the sd_notify protocol, without
+ libsystemd) from a Rocket liftoff fairing, which runs once the listener is
+ bound, after database migrations. The Type=notify unit thus becomes active
+ when vaultwarden can serve. Without $NOTIFY_SOCKET nothing changes.
+Author: dionysius <dragon.dionysius@gmail.com>
+Forwarded: not-yet
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -596,6 +596,7 @@
+         .attach(util::AppHeaders())
+         .attach(util::Cors())
+         .attach(util::BetterLogging::new(extra_debug, basepath))
++        .attach(rocket::fairing::AdHoc::on_liftoff("Systemd Notify", |_| Box::pin(async { notify_systemd_ready() })))
+         .ignite()
+         .await?;
+ 
+@@ -658,6 +659,29 @@
+     });
+ }
+ 
++// Tell systemd the server is ready (sd_notify protocol), if it asked for it
++#[cfg(target_os = "linux")]
++fn notify_systemd_ready() {
++    use std::os::{
++        linux::net::SocketAddrExt,
++        unix::net::{SocketAddr, UnixDatagram},
++    };
++
++    let Some(path) = std::env::var_os("NOTIFY_SOCKET") else {
++        return;
++    };
++    let addr = match path.as_encoded_bytes().strip_prefix(b"@") {
++        Some(name) => SocketAddr::from_abstract_name(name),
++        None => SocketAddr::from_pathname(&path),
++    };
++    if let Err(e) = addr.and_then(|addr| UnixDatagram::unbound()?.send_to_addr(b"READY=1", &addr)) {
++        warn!("Failed to notify systemd: {e}");
++    }
++}
++
++#[cfg(not(target_os = "linux"))]
++fn notify_systemd_ready() {}
++
+ fn schedule_jobs(pool: db::DbPool) {
+     if CONFIG.job_poll_interval_ms() == 0 {
+         info!("Job scheduler disabled.");
