@@ -1,3 +1,11 @@
+vaultwarden (1.37.5-1) unstable; urgency=medium
+
+  * Units: order after a local database
+  * update to [1.37.5](https://github.com/dani-garcia/vaultwarden/releases/tag/1.37.5)
+  * Units: Type=notify, patch vaultwarden to send READY=1 once it listens
+
+ -- dionysius <dragon.dionysius@gmail.com>  Mon, 02 Nov 2026 15:00:09 +0100
+
 vaultwarden (1.37.4-2) unstable; urgency=medium
 
   [ Fredrik Roubert ]
